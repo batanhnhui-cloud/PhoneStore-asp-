@@ -74,7 +74,6 @@
             z-index: 1000;
         }
         
-        /* CARD STYLING TRONG ADMIN */
         .card {
             border: none;
             border-radius: 1rem;
@@ -105,23 +104,31 @@
                 @if (User.IsInRole("Admin"))
                 {
                     <div class="nav-title">BẢNG ĐIỀU KHIỂN</div>
-                    <a asp-controller="Admin" asp-action="Dashboard" class="menu-item"><i class="fa fa-chart-pie fa-fw me-2"></i>Tổng quan Doanh thu</a>
-                    <a asp-controller="Admin" asp-action="ManageInventory" class="menu-item"><i class="fa fa-warehouse fa-fw me-2"></i>Kho Tổng Hệ Thống</a>
+                    <a asp-controller="Admin" asp-action="Dashboard" class="menu-item"><i class="fa fa-chart-pie fa-fw me-2 text-primary"></i>Tổng quan Doanh thu</a>
+                    <a asp-controller="Admin" asp-action="ManageInventory" class="menu-item"><i class="fa fa-warehouse fa-fw me-2 text-primary"></i>Kho Tổng Hệ Thống</a>
                     
                     <div class="nav-title">QUẢN LÝ DANH MỤC</div>
-                    <a asp-controller="Product" asp-action="Index" class="menu-item"><i class="fa fa-mobile-alt fa-fw me-2"></i>Sản phẩm & Giá</a>
-                    <a asp-controller="Admin" asp-action="ManageBranches" class="menu-item"><i class="fa fa-store fa-fw me-2"></i>Hệ thống Chi nhánh</a>
-                    <a asp-controller="Admin" asp-action="ManageStaff" class="menu-item"><i class="fa fa-users-cog fa-fw me-2"></i>Tài khoản Nhân viên</a>
+                    <a asp-controller="Product" asp-action="Index" class="menu-item"><i class="fa fa-mobile-alt fa-fw me-2 text-warning"></i>Sản phẩm & Giá</a>
+                    <a asp-controller="Admin" asp-action="ManageBranches" class="menu-item"><i class="fa fa-store fa-fw me-2 text-warning"></i>Hệ thống Chi nhánh</a>
+                    <a asp-controller="Admin" asp-action="ManageStaff" class="menu-item"><i class="fa fa-users-cog fa-fw me-2 text-warning"></i>Tài khoản Nhân viên</a>
                 }
+
+                <div class="nav-title">CHĂM SÓC KHÁCH HÀNG</div>
+                <a asp-controller="Staff" asp-action="ManageCustomers" class="menu-item">
+                    <i class="fa fa-users fa-fw me-2 text-warning"></i>Khách hàng (CRM)
+                </a>
+                <a asp-controller="Staff" asp-action="ManageComments" class="menu-item">
+                    <i class="fa fa-comments fa-fw me-2 text-warning"></i>Hỏi đáp & Đánh giá
+                </a>
 
                 <div class="nav-title">NGHIỆP VỤ BÁN HÀNG</div>
                 <a asp-controller="Staff" asp-action="POS" class="menu-item"><i class="fa fa-cash-register fa-fw me-2 text-success"></i>Bán hàng (POS)</a>
-                <a asp-controller="Staff" asp-action="OrderManagement" class="menu-item"><i class="fa fa-shopping-cart fa-fw me-2"></i>Xử lý Đơn Online</a>
+                <a asp-controller="Staff" asp-action="OrderManagement" class="menu-item"><i class="fa fa-shopping-cart fa-fw me-2 text-success"></i>Xử lý Đơn Online</a>
 
                 <div class="nav-title">NGHIỆP VỤ KHO BÃI</div>
                 <a asp-controller="Staff" asp-action="Inventory" class="menu-item"><i class="fa fa-boxes fa-fw me-2 text-info"></i>Tồn kho Chi nhánh</a>
-                <a asp-controller="Staff" asp-action="ImportImei" class="menu-item"><i class="fa fa-barcode fa-fw me-2"></i>Nhập kho IMEI</a>
-                <a asp-controller="Staff" asp-action="TransferStock" class="menu-item"><i class="fa fa-truck-moving fa-fw me-2 text-warning"></i>Điều chuyển kho</a>
+                <a asp-controller="Staff" asp-action="ImportImei" class="menu-item"><i class="fa fa-barcode fa-fw me-2 text-info"></i>Nhập kho</a>
+                <a asp-controller="Staff" asp-action="TransferStock" class="menu-item"><i class="fa fa-truck-moving fa-fw me-2 text-info"></i>Điều chuyển kho</a>
 
                 <div class="nav-title">HỆ THỐNG</div>
                 <a asp-controller="Home" asp-action="Index" class="menu-item"><i class="fa fa-globe fa-fw me-2"></i>Xem Cửa Hàng (Web)</a>

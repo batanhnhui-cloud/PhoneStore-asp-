@@ -1,0 +1,218 @@
+﻿@model PhoneStore.Controllers.CustomerPortalVM
+@{
+    ViewData["Title"] = "Trang Khách Hàng - SunMobile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .portal-header { background: linear-gradient(135deg, var(--sun-dark), #1e293b); color: white; padding: 2.5rem 0; margin-bottom: 2rem; border-radius: 0 0 20px 20px; }
+    .nav-pills .nav-link { color: #475569; font-weight: 600; padding: 14px 20px; border-radius: 12px; margin-bottom: 10px; transition: all 0.3s; text-align: left; }
+    .nav-pills .nav-link.active { background: linear-gradient(135deg, var(--sun-primary), #fb923c); color: white; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3); }
+    .nav-pills .nav-link:hover:not(.active) { background-color: #f1f5f9; color: var(--sun-primary); transform: translateX(5px); }
+    .sun-card { border: 2px solid #e2e8f0; border-radius: 16px; transition: all 0.3s; background-color: #fff; position: relative; overflow: hidden; }
+    .sun-card.active-card { border-color: var(--sun-primary); background-color: #fffaf5; }
+    .card-label { position: absolute; top: 15px; right: 15px; }
+</style>
+
+<div class="portal-header shadow-sm">
+    <div class="container text-center text-md-start">
+        <div class="d-flex flex-column flex-md-row align-items-center">
+            <div class="bg-white text-dark rounded-circle d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-4 shadow" style="width: 80px; height: 80px; font-size: 2.5rem;">
+                <i class="fa fa-user-circle text-warning"></i>
+            </div>
+            <div>
+                <h2 class="fw-bolder mb-1">Chào, <span class="text-warning">@Model.CurrentUser.UserName?.Split('@')[0]</span></h2>
+                <p class="mb-0 opacity-75">Thành viên thân thiết của SunMobile Store</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    @if (TempData["SuccessMsg"] != null)
+    {
+        <div class="alert alert-success fw-bold rounded-4 border-0 shadow-sm mb-4"><i class="fa fa-check-circle me-2"></i>@TempData["SuccessMsg"]</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3 sticky-top" style="top: 100px;">
+                <div class="nav flex-column nav-pills" role="tablist">
+                    <button class="nav-link @(Model.ActiveTab == "profile" ? "active" : "")" data-bs-toggle="pill" data-bs-target="#tab-profile" type="button">
+                        <i class="fa fa-user-gear me-2 w-20px text-center"></i> Hồ Sơ Cá Nhân
+                    </button>
+                    <button class="nav-link @(Model.ActiveTab == "orders" ? "active" : "")" data-bs-toggle="pill" data-bs-target="#tab-orders" type="button">
+                        <i class="fa fa-clock-rotate-left me-2 w-20px text-center"></i> Lịch Sử Đơn Hàng
+                    </button>
+                    <button class="nav-link @(Model.ActiveTab == "address" ? "active" : "")" data-bs-toggle="pill" data-bs-target="#tab-address" type="button">
+                        <i class="fa fa-map-location-dot me-2 w-20px text-center"></i> Sổ Địa Chỉ
+                    </button>
+                    <button class="nav-link @(Model.ActiveTab == "warranty" ? "active" : "")" data-bs-toggle="pill" data-bs-target="#tab-warranty" type="button">
+                        <i class="fa fa-shield-halved me-2 w-20px text-center"></i> Tra Cứu Bảo Hành
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="tab-content bg-white p-4 p-md-5 rounded-4 shadow-sm min-vh-50">
+                
+                <div class="tab-pane fade @(Model.ActiveTab == "profile" ? "show active" : "")" id="tab-profile">
+                    <h4 class="fw-bold mb-4 border-bottom pb-3">Thông tin tài khoản</h4>
+                    <form asp-action="UpdateProfile" method="post" class="col-md-8">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted">Email đăng nhập</label>
+                            <input type="text" class="form-control bg-light" value="@Model.CurrentUser.Email" readonly disabled>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Số điện thoại</label>
+                            <input type="text" name="phoneNumber" class="form-control" value="@Model.CurrentUser.PhoneNumber" placeholder="Cập nhật số điện thoại...">
+                        </div>
+                        <button type="submit" class="btn btn-sun rounded-pill px-5 fw-bold">Cập Nhật Hồ Sơ</button>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade @(Model.ActiveTab == "orders" ? "show active" : "")" id="tab-orders">
+                    <h4 class="fw-bold mb-4 border-bottom pb-3">Đơn hàng của bạn</h4>
+                    @if (!Model.MyOrders.Any())
+                    {
+                        <div class="text-center py-5 text-muted">Không có đơn hàng nào.</div>
+                    }
+                    else
+                    {
+                        <div class="accordion" id="ordersAccordion">
+                            @foreach (var order in Model.MyOrders)
+                            {
+                                <div class="accordion-item mb-4 border-0 sun-card overflow-hidden shadow-sm">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed bg-white fw-bold p-4" type="button" data-bs-toggle="collapse" data-bs-target="#order-@order.Id">
+                                            <div class="d-flex justify-content-between align-items-center w-100 pe-3">
+                                                <div>
+                                                    <span class="text-dark fs-5 mb-1 d-block">Đơn hàng #@order.Id</span>
+                                                    <small class="text-muted fw-normal"><i class="fa fa-calendar-alt me-1"></i>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</small>
+                                                </div>
+                                                <div class="text-end d-none d-sm-block">
+                                                    <span class="text-danger fs-5 fw-bolder d-block mb-1">@order.TotalAmount.ToString("N0") đ</span>
+                                                    <span class="badge @(order.Status == "Success" ? "bg-success" : (order.Status == "Pending" ? "bg-warning text-dark" : "bg-danger")) rounded-pill">
+                                                        @order.Status
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="order-@order.Id" class="accordion-collapse collapse" data-bs-parent="#ordersAccordion">
+                                        <div class="accordion-body bg-light border-top p-4">
+                                            <div class="row mb-3">
+                                                <div class="col-sm-8"><small class="text-muted d-block">Địa chỉ giao hàng:</small><span class="fw-bold">@order.CustomerName - @order.Phone</span><br>@order.Address</div>
+                                                <div class="col-sm-4 text-sm-end d-block d-sm-none mt-3"><span class="text-danger fw-bold fs-5">@order.TotalAmount.ToString("N0") đ</span></div>
+                                            </div>
+                                            <ul class="list-group list-group-flush rounded-3 border">
+                                                @foreach(var detail in order.OrderDetails)
+                                                {
+                                                    <li class="list-group-item bg-white d-flex justify-content-between align-items-center">
+                                                        <span><strong class="text-primary">@detail.Quantity x</strong> @detail.Product?.Name</span>
+                                                        <span class="fw-bold">@((detail.Quantity * detail.Price).ToString("N0")) đ</span>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="tab-pane fade @(Model.ActiveTab == "address" ? "show active" : "")" id="tab-address">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                        <h4 class="fw-bold mb-0">Địa chỉ nhận hàng</h4>
+                        <button class="btn btn-sun btn-sm rounded-pill px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#modalAddr">+ Thêm mới</button>
+                    </div>
+                    <div class="row g-4">
+                        @foreach (var a in Model.Addresses)
+                        {
+                            <div class="col-md-6">
+                                <div class="sun-card p-4 h-100 @(a.IsDefault ? "active-card" : "")">
+                                    <h5 class="fw-bold mb-2">@a.ReceiverName</h5>
+                                    <div class="small text-muted mb-1"><i class="fa fa-phone me-2"></i>@a.Phone</div>
+                                    <div class="small text-muted mb-3"><i class="fa fa-location-dot me-2"></i>@a.FullAddress</div>
+                                    @if(a.IsDefault){ <span class="badge bg-warning text-dark rounded-pill card-label px-3 py-1">Mặc định</span> }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="tab-pane fade @(Model.ActiveTab == "warranty" ? "show active" : "")" id="tab-warranty">
+                    <h4 class="fw-bold mb-4 border-bottom pb-3">Thiết bị bảo hành</h4>
+                    <div class="row g-4">
+                        
+                        @* PHẦN 1: MÁY ĐÃ CÓ IMEI (Đã xuất kho thực tế) *@
+                        @foreach (var d in Model.PurchasedDevices)
+                        {
+                            <div class="col-md-12">
+                                <div class="sun-card active-card p-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-white border rounded-3 p-3 me-4 shadow-sm">
+                                            <i class="fa fa-mobile-screen fs-2 text-warning"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fw-bold text-dark mb-1">@d.Product?.Name</h5>
+                                            <div class="font-monospace text-muted small mb-2">IMEI: @d.Imei</div>
+                                            <div class="row g-0 mt-2 border-top pt-2">
+                                                <div class="col-6 small">
+                                                    <div class="text-muted">Ngày kích hoạt</div>
+                                                    <div class="fw-bold">@d.WarrantyActivationDate?.ToString("dd/MM/yyyy")</div>
+                                                </div>
+                                                <div class="col-6 small text-end">
+                                                    <div class="text-muted">Hết hạn</div>
+                                                    <div class="fw-bold text-danger">@d.WarrantyExpirationDate?.ToString("dd/MM/yyyy")</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-success rounded-pill card-label px-3 py-2">Đang bảo hành</span>
+                                </div>
+                            </div>
+                        }
+
+                        @* PHẦN 2: THÔNG BÁO CHO CÁC ĐƠN HÀNG CHƯA ĐƯỢC GÁN IMEI *@
+                        @{
+                            // Lọc ra các đơn hàng mà KHÔNG có ID nằm trong danh sách OrderId của PurchasedDevices
+                            var unfulfilledOrders = Model.MyOrders
+                                .Where(o => o.Status != "Cancelled" && !Model.PurchasedDevices.Any(d => d.OrderId == o.Id))
+                                .ToList();
+                        }
+                        
+                        @foreach (var unfulfilled in unfulfilledOrders)
+                        {
+                            <div class="col-md-12">
+                                <div class="sun-card p-4 border-dashed bg-light">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-white border rounded-3 p-3 me-4 shadow-sm opacity-50">
+                                            <i class="fa fa-box-open fs-2 text-muted"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fw-bold text-muted mb-1">Thiết bị từ Đơn hàng #@unfulfilled.Id</h5>
+                                            <div class="text-muted small">Thông tin bảo hành sẽ được cập nhật tự động khi nhân viên xuất kho và giao hàng thành công.</div>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-secondary rounded-pill card-label px-3 py-2"><i class="fa fa-clock me-1"></i>Đang chờ xuất kho</span>
+                                </div>
+                            </div>
+                        }
+
+                        @if (!Model.PurchasedDevices.Any() && !unfulfilledOrders.Any())
+                        {
+                             <p class="text-center py-5 text-muted">Bạn chưa có đơn hàng/thiết bị nào trong hệ thống.</p>
+                        }
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAddr" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content rounded-4 border-0 shadow-lg"><div class="modal-header border-0 p-4"><h5 class="fw-bold mb-0">Thêm địa chỉ mới</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><form asp-action="AddAddress" method="post"><div class="modal-body p-4 pt-0"><div class="mb-3"><label class="form-label small fw-bold">Người nhận</label><input type="text" name="receiverName" class="form-control" required></div><div class="mb-3"><label class="form-label small fw-bold">Số điện thoại</label><input type="text" name="phone" class="form-control" required></div><div class="mb-0"><label class="form-label small fw-bold">Địa chỉ chi tiết</label><textarea name="fullAddress" class="form-control" rows="3" required></textarea></div></div><div class="modal-footer border-0 p-4"><button type="submit" class="btn btn-sun w-100 rounded-pill fw-bold">Lưu địa chỉ</button></div></form></div></div></div>

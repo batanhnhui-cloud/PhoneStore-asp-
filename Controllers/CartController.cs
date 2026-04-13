@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PhoneStore.Data;
+using PhoneStore.Helpers;
 using PhoneStore.Models;
 
 namespace PhoneStore.Controllers
@@ -17,105 +19,100 @@ namespace PhoneStore.Controllers
             _userManager = userManager;
         }
 
-        // 1. XEM GIỎ HÀNG
-        public IActionResult Index()
-        {
-            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
-            return View(cart);
-        }
+        private List<CartItem> GetCart() { var cart = HttpContext.Session.Get<List<CartItem>>("Cart"); return cart ?? new List<CartItem>(); }
 
-        // 2. THÊM VÀO GIỎ
+        public IActionResult Index() => View(GetCart());
+
         [HttpPost]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
             var product = await _context.Products.FindAsync(productId);
             if (product == null) return NotFound();
-
-            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
-            var existingItem = cart.FirstOrDefault(c => c.ProductId == productId);
-
-            if (existingItem != null) { existingItem.Quantity += quantity; }
-            else
-            {
-                cart.Add(new CartItem
-                {
-                    ProductId = product.Id,
-                    ProductName = product.Name,
-                    ImageUrl = product.ImageUrl,
-                    Price = product.Price,
-                    Quantity = quantity
-                });
-            }
-
-            HttpContext.Session.SetObjectAsJson("Cart", cart);
-            TempData["SuccessMessage"] = "Đã thêm " + product.Name + " vào giỏ hàng!";
-            return RedirectToAction("Index", "Home");
-        }
-
-        // 3. XÓA KHỎI GIỎ
-        public IActionResult RemoveFromCart(int id)
-        {
-            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart");
-            if (cart != null)
-            {
-                cart.RemoveAll(c => c.ProductId == id);
-                HttpContext.Session.SetObjectAsJson("Cart", cart);
-            }
+            var cart = GetCart();
+            var item = cart.FirstOrDefault(c => c.ProductId == productId);
+            if (item != null) item.Quantity += quantity;
+            else cart.Add(new CartItem { ProductId = product.Id, ProductName = product.Name, Price = product.Price, Quantity = quantity, ImageUrl = product.ImageUrl });
+            HttpContext.Session.Set("Cart", cart);
             return RedirectToAction(nameof(Index));
         }
 
-        // 4. TRANG THANH TOÁN (GET)
+        public IActionResult RemoveFromCart(int id)
+        {
+            var cart = GetCart();
+            var item = cart.FirstOrDefault(c => c.ProductId == id);
+            if (item != null) { cart.Remove(item); HttpContext.Session.Set("Cart", cart); }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public IActionResult UpdateQuantity(int id, int quantity)
+        {
+            var cart = GetCart();
+            var item = cart.FirstOrDefault(c => c.ProductId == id);
+            if (item != null) { if (quantity > 0) item.Quantity = quantity; else cart.Remove(item); HttpContext.Session.Set("Cart", cart); }
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpGet]
         public async Task<IActionResult> Checkout()
         {
-            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart") ?? new List<CartItem>();
-            if (!cart.Any()) return RedirectToAction(nameof(Index));
-
-            // Nếu khách ĐÃ đăng nhập, tự điền sẵn tên và số điện thoại
-            var user = await _userManager.GetUserAsync(User);
-            if (user != null)
+            var cart = GetCart(); if (!cart.Any()) return RedirectToAction(nameof(Index));
+            ViewBag.Branches = new SelectList(await _context.Branches.ToListAsync(), "Id", "Name");
+            ViewBag.SavedAddresses = new List<CustomerAddress>();
+            if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                ViewBag.CustomerName = user.FullName;
-                ViewBag.Phone = user.PhoneNumber;
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null) ViewBag.SavedAddresses = await _context.CustomerAddresses.Where(a => a.UserId == user.Id).OrderByDescending(a => a.IsDefault).ToListAsync();
             }
-
             return View(cart);
         }
 
-        // 5. CHỐT ĐƠN HÀNG (POST)
         [HttpPost]
-        public async Task<IActionResult> Checkout(string customerName, string phone, string address)
+        public async Task<IActionResult> Checkout(string customerName, string phone, string address, int branchId)
         {
-            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("Cart");
-            if (cart == null || !cart.Any()) return RedirectToAction(nameof(Index));
+            var cart = GetCart(); if (!cart.Any()) return RedirectToAction(nameof(Index));
 
-            var user = await _userManager.GetUserAsync(User);
-            var defaultBranch = await _context.Branches.FirstOrDefaultAsync(); // Gán tạm đơn cho chi nhánh đầu tiên xử lý
+            string? currentUserId = null;
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null) currentUserId = user.Id;
+            }
 
+            // ĐÚNG CHUẨN THỰC TẾ: Đơn hàng tạo ra phải ở trạng thái "Pending" (Chờ xử lý)
             var order = new Order
             {
+                UserId = currentUserId,
                 CustomerName = customerName,
                 Phone = phone,
                 Address = address,
+                BranchId = branchId,
                 OrderDate = DateTime.Now,
-                TotalAmount = cart.Sum(c => c.Total),
-                Status = "Pending",
-                BranchId = defaultBranch?.Id,
-                UserId = user?.Id // Nếu đăng nhập thì có ID, nếu khách vãng lai thì tự động = Null
+                Status = "Pending", // ĐÃ ĐỔI TỪ SUCCESS THÀNH PENDING
+                TotalAmount = cart.Sum(c => c.Price * c.Quantity)
             };
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
+            // Chỉ lưu chi tiết sản phẩm khách muốn mua (Không tự động xuất kho nữa)
             foreach (var item in cart)
             {
-                _context.OrderDetails.Add(new OrderDetail { OrderId = order.Id, ProductId = item.ProductId, Quantity = item.Quantity, Price = item.Price });
+                _context.OrderDetails.Add(new OrderDetail
+                {
+                    OrderId = order.Id,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    Price = item.Price
+                });
             }
-            await _context.SaveChangesAsync();
 
-            HttpContext.Session.Remove("Cart"); // Xóa giỏ hàng sau khi đặt thành công
-            TempData["SuccessMessage"] = "🎉 Đặt hàng thành công! Mã đơn hàng của bạn là #" + order.Id + ". Chúng tôi sẽ liên hệ sớm nhất.";
-            return RedirectToAction("Index", "Home");
+            await _context.SaveChangesAsync();
+            HttpContext.Session.Remove("Cart");
+
+            return RedirectToAction("CheckoutSuccess", new { orderId = order.Id });
         }
+
+        public IActionResult CheckoutSuccess(int orderId) { ViewBag.OrderId = orderId; return View(); }
     }
 }

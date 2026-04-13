@@ -8,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 // --- 1. CẤU HÌNH DATABASE (SQL SERVER) ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Không tìm thấy chuỗi kết nối 'DefaultConnection'.");
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
@@ -37,8 +36,8 @@ builder.Services.ConfigureApplicationCookie(options => {
 
 // --- 4. CẤU HÌNH SESSION (Dành cho Giỏ hàng) ---
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options => {
-    builder.Services.AddHttpContextAccessor();
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
@@ -46,9 +45,20 @@ builder.Services.AddSession(options => {
 
 // --- 5. ĐĂNG KÝ CÁC DỊCH VỤ MVC ---
 builder.Services.AddControllersWithViews();
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options => { options.IdleTimeout = TimeSpan.FromMinutes(30); options.Cookie.IsEssential = true; });
 builder.Services.AddRazorPages();
+
+// ====================================================================
+// [THÊM MỚI QUAN TRỌNG]: CẤU HÌNH CORS CHO API (CẤP QUYỀN CHO APPLE)
+// ====================================================================
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAppleEDI", policy =>
+    {
+        policy.AllowAnyOrigin()  // Cho phép mọi tên miền (kể cả file HTML ở Desktop)
+              .AllowAnyMethod()  // Cho phép mọi method (POST, GET...)
+              .AllowAnyHeader(); // Cho phép mọi header (JSON)
+    });
+});
 
 var app = builder.Build();
 
@@ -77,13 +87,15 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-app.UseSession();
 
-// LƯU Ý: Session phải đặt TRƯỚC Authentication
-app.UseSession();
+// ====================================================================
+// [THÊM MỚI QUAN TRỌNG]: KÍCH HOẠT CORS VỪA CẤU HÌNH Ở TRÊN
+// Bắt buộc phải đặt ở đây: Nằm DƯỚI UseRouting và TRÊN UseAuthorization
+// ====================================================================
+app.UseCors("AllowAppleEDI");
 
+app.UseSession(); // LƯU Ý: Session phải đặt TRƯỚC Authentication
 app.UseAuthentication(); // Ai là người đang truy cập?
 app.UseAuthorization();  // Người đó có quyền làm gì?
 
@@ -91,7 +103,6 @@ app.UseAuthorization();  // Người đó có quyền làm gì?
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.MapRazorPages();
 
 app.Run();

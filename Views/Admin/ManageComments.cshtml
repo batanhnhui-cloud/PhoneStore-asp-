@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "Quản lý Bình luận & Hỏi đáp";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Thay bằng Layout Admin của bạn nếu khác
+    var reviews = ViewBag.Reviews as List<PhoneStore.Models.Review>;
+    var questions = ViewBag.Questions as List<PhoneStore.Models.Comment>;
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-dark m-0"><i class="fa fa-comments text-primary me-2"></i>Quản lý Tương tác Khách hàng</h3>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success fw-bold"><i class="fa fa-check-circle me-2"></i>@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-white border-bottom p-0">
+            <ul class="nav nav-tabs nav-fill fw-bold" id="interactionTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active py-3 text-dark fs-5" data-bs-toggle="tab" data-bs-target="#qa-tab" type="button">
+                        <i class="fa fa-question-circle text-warning me-2"></i>Hỏi đáp Cần Xử Lý (@questions?.Count)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link py-3 text-dark fs-5" data-bs-toggle="tab" data-bs-target="#reviews-tab" type="button">
+                        <i class="fa fa-star text-warning me-2"></i>Đánh giá Sản phẩm (@reviews?.Count)
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="tab-content" id="interactionTabsContent">
+                
+                <div class="tab-pane fade show active" id="qa-tab" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Sản phẩm</th>
+                                    <th>Khách hàng</th>
+                                    <th width="35%">Nội dung câu hỏi</th>
+                                    <th>Thời gian</th>
+                                    <th>Trạng thái</th>
+                                    <th class="text-end pe-4">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (questions != null && questions.Any())
+                                {
+                                    foreach (var q in questions)
+                                    {
+                                        // Kiểm tra xem câu hỏi này đã có nhân viên nào trả lời chưa
+                                        bool isAnswered = q.Replies != null && q.Replies.Any();
+                                        
+                                        <tr class="@(isAnswered ? "" : "bg-warning bg-opacity-10")">
+                                            <td class="ps-4 fw-bold">
+                                                <a href="/Product/Details/@q.ProductId" target="_blank" class="text-decoration-none text-dark">
+                                                    @q.Product?.Name
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <div class="fw-bold">@(q.User?.FullName ?? q.User?.UserName?.Split('@')[0])</div>
+                                                <small class="text-muted">@q.User?.Email</small>
+                                            </td>
+                                            <td><div class="text-truncate" style="max-width: 300px;" title="@q.Content">@q.Content</div></td>
+                                            <td><small class="text-muted">@q.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small></td>
+                                            <td>
+                                                @if (isAnswered)
+                                                {
+                                                    <span class="badge bg-success rounded-pill px-3"><i class="fa fa-check me-1"></i>Đã trả lời</span>
+                                                }
+                                                else
+                                                {
+
+                                                    <span class="badge bg-danger rounded-pill px-3"><i class="fa fa-clock me-1"></i>Chờ trả lời</span>
+                                                }
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <div class="d-flex justify-content-end gap-2">
+                                                    <a href="/Product/Details/@q.ProductId#qa" target="_blank" class="btn btn-sm btn-primary fw-bold">
+                                                        <i class="fa fa-reply me-1"></i> Trả lời
+                                                    </a>
+                                                    <form asp-action="DeleteComment" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa câu hỏi này?');">
+                                                        <input type="hidden" name="id" value="@q.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr><td colspan="6" class="text-center py-5 text-muted">Chưa có câu hỏi nào từ khách hàng.</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="reviews-tab" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Sản phẩm</th>
+                                    <th>Khách hàng</th>
+                                    <th>Đánh giá</th>
+                                    <th width="30%">Nội dung</th>
+                                    <th>Thời gian</th>
+                                    <th class="text-end pe-4">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (reviews != null && reviews.Any())
+                                {
+                                    foreach (var r in reviews)
+                                    {
+                                        <tr>
+                                            <td class="ps-4 fw-bold">@r.Product?.Name</td>
+                                            <td>
+                                                <div class="fw-bold text-success"><i class="fa fa-circle-check me-1 small"></i>@(r.User?.FullName ?? r.User?.UserName?.Split('@')[0])</div>
+                                            </td>
+                                            <td class="text-warning">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    <i class="fa fa-star @(i <= r.Rating ? "" : "text-muted opacity-25")"></i>
+                                                }
+                                            </td>
+                                            <td>@r.Comment</td>
+                                            <td><small class="text-muted">@r.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small></td>
+                                            <td class="text-end pe-4">
+                                                <form asp-action="DeleteReview" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa đánh giá này?');">
+                                                    <input type="hidden" name="id" value="@r.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i> Xóa</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr><td colspan="6" class="text-center py-5 text-muted">Chưa có đánh giá nào.</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

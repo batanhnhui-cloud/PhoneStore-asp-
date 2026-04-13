@@ -19,6 +19,11 @@ namespace PhoneStore.Data
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<DeviceImei> DeviceImeis { get; set; }
         public DbSet<ImeiTransfer> ImeiTransfers { get; set; }
+        public DbSet<CustomerAddress> CustomerAddresses { get; set; }
+
+        public DbSet<Review> Reviews { get; set; }
+
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

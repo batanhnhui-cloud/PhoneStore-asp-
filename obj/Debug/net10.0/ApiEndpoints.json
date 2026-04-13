@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "ContainingType": "PhoneStore.Controllers.Api.EdiController",
+    "Method": "ReceiveShipment",
+    "RelativePath": "api/Edi/receive-shipment",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "payload",
+        "Type": "PhoneStore.DTOs.EdiShipmentPayload",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PhoneStore.Controllers.Api.VendorApiController",
+    "Method": "ReceiveDataFromApple",
+    "RelativePath": "api/vendor/push-edi",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "payload",
+        "Type": "PhoneStore.Controllers.Api.VendorApiController\u002BVendorShipmentPayload",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

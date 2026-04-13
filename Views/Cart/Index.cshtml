@@ -1,27 +1,22 @@
 ﻿@model IEnumerable<PhoneStore.Models.CartItem>
 @{
     ViewData["Title"] = "Giỏ hàng của bạn";
-    // Tính tổng tiền dựa trên thuộc tính Total bạn đã viết sẵn trong Model
-    decimal totalCart = Model?.Sum(i => i.Total) ?? 0;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container my-5" style="min-height: 60vh;">
+<div class="container py-5">
     <div class="d-flex align-items-center mb-4">
-        <h2 class="fw-bolder text-dark mb-0"><i class="fa fa-shopping-bag me-2" style="color: #f97316;"></i> Giỏ Hàng</h2>
-        <span class="badge bg-dark rounded-pill ms-3 fs-6 px-3 py-2">@(Model?.Sum(i => i.Quantity) ?? 0) sản phẩm</span>
+        <h2 class="fw-bolder mb-0"><i class="fa fa-shopping-bag text-warning me-3"></i> Giỏ Hàng</h2>
+        <span class="badge bg-dark rounded-pill ms-3 fs-6">@Model.Sum(x => x.Quantity) sản phẩm</span>
     </div>
 
-    @if (Model == null || !Model.Any())
+    @if (!Model.Any())
     {
-        <div class="card shadow-sm border-0 rounded-5 py-5 text-center">
-            <div class="card-body py-5">
-                <i class="fa fa-cart-arrow-down fs-1 text-muted opacity-50 mb-4" style="font-size: 5rem !important;"></i>
-                <h4 class="fw-bold text-dark mb-3">Giỏ hàng của bạn đang trống</h4>
-                <p class="text-muted mb-4">Vẫn còn rất nhiều sản phẩm công nghệ đang chờ bạn khám phá.</p>
-                <a asp-controller="Home" asp-action="Shop" class="btn btn-lg rounded-pill px-5 text-white fw-bold shadow-sm" style="background: linear-gradient(135deg, #f97316, #fb923c); border: none;">
-                    Tiếp tục mua sắm
-                </a>
-            </div>
+        <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+            <i class="fa fa-cart-arrow-down text-muted mb-3" style="font-size: 5rem; opacity: 0.5;"></i>
+            <h4 class="fw-bold text-muted">Giỏ hàng của bạn đang trống</h4>
+            <p class="text-muted mb-4">Hãy chọn thêm sản phẩm để mua sắm nhé!</p>
+            <a href="/Product" class="btn btn-sun rounded-pill px-5 py-2 fw-bold fs-5">Tiếp tục mua sắm</a>
         </div>
     }
     else
@@ -29,39 +24,60 @@
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light text-muted small">
+                    <div class="card-body p-0">
+                        <table class="table align-middle mb-0">
+                            <thead class="bg-light">
                                 <tr>
-                                    <th class="ps-4 py-3" colspan="2">SẢN PHẨM</th>
-                                    <th class="py-3 text-center">ĐƠN GIÁ</th>
-                                    <th class="py-3 text-center" style="width: 150px;">SỐ LƯỢNG</th>
-                                    <th class="py-3 text-end pe-4">THÀNH TIỀN</th>
+                                    <th class="py-3 ps-4 text-muted small">SẢN PHẨM</th>
+                                    <th class="py-3 text-muted small text-center">ĐƠN GIÁ</th>
+                                    <th class="py-3 text-muted small text-center">SỐ LƯỢNG</th>
+                                    <th class="py-3 text-muted small text-end pe-4">THÀNH TIỀN</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in Model)
                                 {
-                                    <tr class="border-bottom">
-                                        <td class="ps-4 py-3 text-center" style="width: 100px;">
-                                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://via.placeholder.com/80x80?text=No+Image" : item.ImageUrl)" alt="@item.ProductName" class="img-fluid rounded-3 mb-2" style="max-height: 60px;" />
-                                            <br />
-                                            <form asp-action="RemoveFromCart" method="post" class="d-inline">
-                                                <input type="hidden" name="productId" value="@item.ProductId" />
-                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" title="Xóa" onclick="return confirm('Bỏ sản phẩm này khỏi giỏ hàng?');"><i class="fa fa-trash-alt me-1"></i> Xóa</button>
+                                    <tr>
+                                        <td class="ps-4 py-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="position-relative me-3">
+                                                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)" 
+                                                         class="rounded-3 border object-fit-cover" 
+                                                         style="width: 80px; height: 80px; background-color: #f8f9fa;" 
+                                                         alt="@item.ProductName"
+                                                         onerror="this.src='https://via.placeholder.com/80?text=No+Image'" />
+                                                </div>
+                                                <div>
+                                                    <h6 class="fw-bold text-dark mb-1">@item.ProductName</h6>
+                                                    <a href="/Cart/RemoveFromCart/@item.ProductId" class="text-danger small text-decoration-none fw-bold">
+                                                        <i class="fa fa-trash-alt me-1"></i> Xóa
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        
+                                        <td class="text-center fw-bold text-muted">
+                                            @item.Price.ToString("N0") đ
+                                        </td>
+
+                                        <td class="text-center">
+                                            <form asp-controller="Cart" asp-action="UpdateQuantity" method="post" class="d-flex justify-content-center align-items-center">
+                                                <input type="hidden" name="id" value="@item.ProductId" />
+                                                <div class="input-group input-group-sm border rounded-pill overflow-hidden" style="width: 120px;">
+                                                    <button class="btn btn-light border-0 px-3 text-muted" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepDown(); this.form.submit()">
+                                                        <i class="fa fa-minus"></i>
+                                                    </button>
+                                                    <input type="number" name="quantity" value="@item.Quantity" min="1" max="50" class="form-control border-0 text-center fw-bold bg-white" readonly onchange="this.form.submit()">
+                                                    <button class="btn btn-light border-0 px-3 text-muted" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepUp(); this.form.submit()">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </div>
                                             </form>
                                         </td>
-                                        <td class="py-3">
-                                            <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId" class="fw-bold text-dark text-decoration-none fs-5">@item.ProductName</a>
+
+                                        <td class="text-end pe-4 fw-bolder text-danger fs-5">
+                                            @((item.Price * item.Quantity).ToString("N0")) đ
                                         </td>
-                                        <td class="text-center fw-bold text-muted py-3">@item.Price.ToString("N0") đ</td>
-                                        <td class="text-center py-3">
-                                            <form asp-action="UpdateQuantity" method="post" class="d-flex align-items-center justify-content-center">
-                                                <input type="hidden" name="productId" value="@item.ProductId" />
-                                                <input type="number" name="quantity" value="@item.Quantity" min="1" max="10" class="form-control form-control-sm text-center fw-bold me-2" style="width: 60px;" onchange="this.form.submit()" />
-                                            </form>
-                                        </td>
-                                        <td class="text-end fw-bolder text-danger pe-4 py-3 fs-5">@item.Total.ToString("N0") đ</td>
                                     </tr>
                                 }
                             </tbody>
@@ -71,29 +87,31 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0 rounded-4 border-top border-4" style="border-top-color: #f97316 !important;">
+                <div class="card shadow-sm border-0 rounded-4 border-top border-sun border-4">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold text-dark mb-4">Tóm tắt đơn hàng</h5>
+                        <h5 class="fw-bold mb-4">Tóm tắt đơn hàng</h5>
                         
                         <div class="d-flex justify-content-between mb-3 text-muted">
                             <span>Tạm tính</span>
-                            <span class="fw-bold text-dark">@totalCart.ToString("N0") đ</span>
+                            <span class="fw-bold text-dark">@Model.Sum(x => x.Price * x.Quantity).ToString("N0") đ</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-4 text-muted border-bottom pb-3">
+                        <div class="d-flex justify-content-between mb-3 text-muted">
                             <span>Phí vận chuyển</span>
-                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2">Miễn phí</span>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1">Miễn phí</span>
                         </div>
                         
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="fw-bold fs-5 text-dark">Tổng cộng</span>
-                            <span class="fw-bolder fs-4 text-danger">@totalCart.ToString("N0") đ</span>
+                        <hr class="my-4">
+                        
+                        <div class="d-flex justify-content-between align-items-end mb-4">
+                            <span class="fw-bold fs-5">Tổng cộng</span>
+                            <span class="fw-black text-danger fs-3">@Model.Sum(x => x.Price * x.Quantity).ToString("N0") đ</span>
                         </div>
 
-                        <a asp-action="Checkout" class="btn btn-lg w-100 rounded-pill fw-bold shadow-sm text-white" style="background: linear-gradient(135deg, #f97316, #fb923c); border: none;">
+                        <a href="/Cart/Checkout" class="btn btn-sun w-100 py-3 rounded-pill fw-bold fs-5 shadow-sm mb-3">
                             Tiến hành Thanh toán <i class="fa fa-arrow-right ms-2"></i>
                         </a>
-                        <div class="text-center mt-3">
-                            <a asp-controller="Home" asp-action="Shop" class="text-muted small text-decoration-none"><i class="fa fa-reply me-1"></i> Mua thêm sản phẩm khác</a>
+                        <div class="text-center">
+                            <a href="/" class="text-muted small text-decoration-none"><i class="fa fa-reply me-1"></i> Mua thêm sản phẩm khác</a>
                         </div>
                     </div>
                 </div>
@@ -101,3 +119,12 @@
         </div>
     }
 </div>
+
+<style>
+    .border-sun { border-color: var(--sun-primary) !important; }
+    .btn-sun { background: linear-gradient(135deg, #f97316, #fb923c); color: white; transition: all 0.3s ease; }
+    .btn-sun:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(249, 115, 22, 0.3); color: white; }
+    /* Ẩn mũi tên mặc định của input number */
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+</style>

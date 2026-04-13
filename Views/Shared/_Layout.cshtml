@@ -9,59 +9,16 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     
     <style>
-        :root {
-            --sun-primary: #f97316; /* Màu cam rực rỡ */
-            --sun-dark: #0f172a;    /* Màu đen sâu */
-            --sun-light: #f8fafc;
-        }
-        body { 
-            background-color: var(--sun-light); 
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-        .navbar { 
-            background: rgba(255, 255, 255, 0.98) !important; 
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
-        }
-        .brand-logo { 
-            font-size: 2rem; 
-            font-weight: 900; 
-            letter-spacing: -0.5px;
-            text-decoration: none;
-        }
-        .nav-item .nav-link { 
-            font-weight: 600; 
-            color: #475569 !important; 
-            transition: all 0.3s ease; 
-        }
-        .nav-item .nav-link:hover { 
-            color: var(--sun-primary) !important; 
-            transform: translateY(-2px);
-        }
-        .btn-sun {
-            background: linear-gradient(135deg, #f97316, #fb923c);
-            color: white;
-            font-weight: 700;
-            border: none;
-            transition: all 0.3s ease;
-        }
-        .btn-sun:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(249, 115, 22, 0.3);
-            color: white;
-        }
-        /* Footer chuẩn E-commerce */
-        .modern-footer {
-            background-color: var(--sun-dark);
-            color: #94a3b8;
-            padding: 4rem 0 2rem;
-            margin-top: auto;
-        }
-        .modern-footer h5 {
-            color: #ffffff;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-        }
+        :root { --sun-primary: #f97316; --sun-dark: #0f172a; --sun-light: #f8fafc; }
+        body { background-color: var(--sun-light); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        .navbar { background: rgba(255, 255, 255, 0.98) !important; backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important; }
+        .brand-logo { font-size: 2rem; font-weight: 900; letter-spacing: -0.5px; text-decoration: none; }
+        .nav-item .nav-link { font-weight: 600; color: #475569 !important; transition: all 0.3s ease; }
+        .nav-item .nav-link:hover { color: var(--sun-primary) !important; transform: translateY(-2px); }
+        .btn-sun { background: linear-gradient(135deg, #f97316, #fb923c); color: white; font-weight: 700; border: none; transition: all 0.3s ease; }
+        .btn-sun:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(249, 115, 22, 0.3); color: white; }
+        .modern-footer { background-color: var(--sun-dark); color: #94a3b8; padding: 4rem 0 2rem; margin-top: auto; }
+        .modern-footer h5 { color: #ffffff; font-weight: 700; margin-bottom: 1.5rem; }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -69,30 +26,23 @@
     <header class="sticky-top">
         <nav class="navbar navbar-expand-lg navbar-light py-3">
             <div class="container">
-                <a class="brand-logo text-dark d-flex align-items-center me-5" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand brand-logo text-dark d-flex align-items-center" asp-controller="Home" asp-action="Index">
                     <i class="fa fa-sun text-warning me-2 fs-2" style="text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);"></i>
                     Sun<span style="color: var(--sun-primary);">Mobile</span>
                 </a>
                 
-                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-                    <i class="fa fa-bars fs-3 text-dark"></i>
+                <button class="navbar-toggler border-0 shadow-sm bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                    <span class="navbar-toggler-icon"></span>
                 </button>
                 
                 <div class="collapse navbar-collapse" id="navbarMain">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 fs-5 gap-3">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Shop"><i class="fa fa-mobile-alt me-1"></i> Điện thoại</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="TrackOrder" style="color: var(--sun-primary) !important;">
-                                <i class="fa fa-map-marker-alt me-1"></i> Tra cứu Đơn
-                            </a>
-                        </li>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 fs-5 gap-3 ms-lg-4">
+                        <li class="nav-item"><a class="nav-link fw-bold" asp-controller="Home" asp-action="Shop"><i class="fa fa-mobile-screen-button me-1"></i> Điện thoại</a></li>
                     </ul>
 
                     <ul class="navbar-nav align-items-center gap-3">
                         <li class="nav-item">
-                            <a class="btn btn-light position-relative fw-bold text-dark px-4 py-2 border rounded-pill shadow-sm hover-lift" asp-controller="Cart" asp-action="Index">
+                            <a class="btn btn-light position-relative fw-bold text-dark px-4 py-2 border rounded-pill shadow-sm" asp-controller="Cart" asp-action="Index">
                                 <i class="fa fa-shopping-cart me-2" style="color: var(--sun-primary);"></i> Giỏ hàng
                             </a>
                         </li>
@@ -109,18 +59,26 @@
                             }
                             else
                             {
-                                <li class="nav-item"><a class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold" asp-controller="Home" asp-action="MyOrders"><i class="fa fa-history me-2"></i>Đơn của tôi</a></li>
+                                <li class="nav-item"><a class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold" asp-controller="Customer" asp-action="Dashboard"><i class="fa fa-user-circle me-2"></i>Trang của tôi</a></li>
                             }
 
                             <li class="nav-item dropdown ms-1">
                                 <a class="nav-link dropdown-toggle fw-bold bg-white border shadow-sm rounded-pill px-4 py-2 text-dark" href="#" data-bs-toggle="dropdown">
                                     <i class="fa fa-user-circle me-1 text-muted"></i> @User.Identity.Name?.Split('@')[0]
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-3 p-2">
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-3 p-2" style="min-width: 250px;">
+                                    @if (!User.IsInRole("Admin") && !User.IsInRole("Staff"))
+                                    {
+                                        <li><a class="dropdown-item fw-bold rounded-3 py-2 text-dark" asp-controller="Customer" asp-action="Dashboard" asp-route-tab="profile"><i class="fa fa-address-card me-2 text-muted w-20px text-center"></i> Hồ sơ cá nhân</a></li>
+                                        <li><a class="dropdown-item fw-bold rounded-3 py-2 text-dark" asp-controller="Customer" asp-action="Dashboard" asp-route-tab="orders"><i class="fa fa-box-open me-2 text-muted w-20px text-center"></i> Lịch sử đơn hàng</a></li>
+                                        <li><a class="dropdown-item fw-bold rounded-3 py-2 text-dark" asp-controller="Customer" asp-action="Dashboard" asp-route-tab="address"><i class="fa fa-map-location-dot me-2 text-muted w-20px text-center"></i> Sổ địa chỉ</a></li>
+                                        <li><a class="dropdown-item fw-bold rounded-3 py-2 text-dark" asp-controller="Customer" asp-action="Dashboard" asp-route-tab="warranty"><i class="fa fa-shield-halved me-2 text-muted w-20px text-center"></i> Tra cứu bảo hành</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    }
                                     <li>
                                         <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
                                             <button type="submit" class="dropdown-item text-danger fw-bold rounded-3 py-2">
-                                                <i class="fa fa-sign-out-alt me-2"></i> Đăng xuất
+                                                <i class="fa fa-sign-out-alt me-2 w-20px text-center"></i> Đăng xuất
                                             </button>
                                         </form>
                                     </li>
@@ -139,9 +97,7 @@
     </header>
 
     <div class="container main-content mt-5 mb-5 flex-grow-1">
-        <main role="main">
-            @RenderBody()
-        </main>
+        <main role="main">@RenderBody()</main>
     </div>
 
     <footer class="modern-footer border-top-0">
@@ -158,26 +114,18 @@
                     <ul class="list-unstyled small opacity-75 lh-lg">
                         <li><i class="fa fa-angle-right me-2 text-warning"></i>Bảo hành 12 tháng bằng IMEI</li>
                         <li><i class="fa fa-angle-right me-2 text-warning"></i>Giao hàng hỏa tốc trong 2 giờ</li>
-                        <li><i class="fa fa-angle-right me-2 text-warning"></i>Đổi trả miễn phí 30 ngày</li>
                     </ul>
                 </div>
                 <div class="col-lg-4 col-md-12">
                     <h5>Đồ án môn học</h5>
                     <div class="d-flex align-items-center mb-3">
-                        <div class="bg-white text-dark rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px;">
-                            <i class="fa fa-graduation-cap fs-5"></i>
-                        </div>
-                        <div>
-                            <p class="mb-0 fw-bold text-white">Được phát triển bởi</p>
-                            <p class="mb-0 small opacity-75">GitHub: batanhnhui</p>
-                        </div>
+                        <div class="bg-white text-dark rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px;"><i class="fa fa-graduation-cap fs-5"></i></div>
+                        <div><p class="mb-0 fw-bold text-white">Phát triển bởi batanhnhui</p></div>
                     </div>
                 </div>
             </div>
             <hr class="opacity-25" />
-            <div class="text-center small opacity-50 pt-3">
-                &copy; @DateTime.Now.Year SunMobile.
-            </div>
+            <div class="text-center small opacity-50 pt-3">&copy; @DateTime.Now.Year SunMobile.</div>
         </div>
     </footer>
 

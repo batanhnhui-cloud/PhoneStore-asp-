@@ -1,7 +1,14 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Rendering
 @model IEnumerable<PhoneStore.Models.Product>
 @{
-    ViewData["Title"] = "Cửa hàng - SunMobile";
+    ViewData["Title"] = "Trang chủ - SunMobile";
+
+    // Lọc danh sách điện thoại nổi bật (Lấy 8 máy mới nhất)
+    // Loại bỏ Máy tính bảng khỏi danh sách này để đảm bảo rạch ròi
+    var hotPhones = Model.Where(p => p.Category == null || p.Category.Name != "Máy tính bảng").OrderByDescending(p => p.Id).Take(8);
+    
+    // Kiểm tra xem thực sự có danh mục Máy tính bảng và sản phẩm trong Database không
+    var hasTablets = Model.Any(p => p.Category != null && p.Category.Name == "Máy tính bảng");
 }
 
 <style>
@@ -11,99 +18,256 @@
         --sun-dark: #1e293b;
         --sun-darker: #0f172a;
     }
+    
+    body { background-color: #f8fafc; font-family: 'Inter', sans-serif; }
 
+    /* Carousel Banner - Nơi Marketing đắc địa */
+    .hero-banner { border-radius: 24px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+    .hero-banner img { height: 400px; object-fit: cover; }
+    .carousel-item { position: relative; }
+    .hero-text-overlay {
+        position: absolute;
+        bottom: 25%;
+        left: 8%;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    }
+    .hero-title { font-size: 3.5rem; font-weight: 800; letter-spacing: -1px; }
+
+    /* Tiện ích tra cứu nhanh */
+    .utility-card {
+        background: #fff;
+        border-radius: 16px;
+        transition: all 0.3s;
+        border: 1px solid #f1f5f9;
+        text-decoration: none;
+    }
+    .utility-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(249, 115, 22, 0.1);
+        border-color: var(--sun-orange);
+    }
+    .utility-icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        background: #f8fafc;
+    }
+
+    /* Quick Nav Boxes (Chỉ để điện thoại) */
+    .quick-category-box { 
+        background: #fff; border-radius: 20px; padding: 25px; 
+        transition: all 0.3s; text-align: center; border: 1px solid #f1f5f9; 
+        text-decoration: none; display: flex; flex-direction: column; 
+        align-items: center; justify-content: center; height: 120px; color: var(--sun-dark); 
+    }
+    .quick-category-box:hover { 
+        transform: translateY(-5px); box-shadow: 0 10px 20px rgba(249, 115, 22, 0.08); 
+        border-color: var(--sun-orange); color: var(--sun-orange); 
+    }
+    .cat-icon { font-size: 3rem; margin-bottom: 8px; color: var(--sun-orange); }
+
+    /* Section Headings */
+    .section-title { font-weight: 800; font-size: 1.8rem; color: var(--sun-dark); display: flex; align-items: center; margin-bottom: 30px; }
+    .section-title span { color: var(--sun-orange); margin-right: 12px; }
+    
+    /* Product Card (Style đồng nhất với trang Shop) */
     .product-card { transition: all 0.3s cubic-bezier(.25,.8,.25,1); border: 1px solid rgba(0,0,0,0.03); }
-    .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important; border-color: rgba(249, 115, 22, 0.2); }
-    
-    .product-img-wrapper { overflow: hidden; padding: 2rem; background: #fff; position: relative; }
-    .product-img-wrapper img { transition: transform 0.6s ease; object-fit: contain; height: 200px; width: 100%; }
-    .product-card:hover .product-img-wrapper img { transform: scale(1.1); }
-    
-    .btn-buy-now { background: rgba(249, 115, 22, 0.1); color: var(--sun-orange); font-weight: 700; border: none; transition: all 0.3s; }
-    .product-card:hover .btn-buy-now { background: linear-gradient(135deg, var(--sun-orange), var(--sun-orange-light)); color: white; }
-    
-    .product-title { color: var(--sun-dark); text-decoration: none; transition: color 0.2s; font-size: 1.15rem; height: 2.8rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important; border-color: rgba(249, 115, 22, 0.2); }
+    .product-img-wrapper { padding: 1.5rem; background: #fff; overflow: hidden; text-align: center; border-radius: 12px; }
+    .product-img-wrapper img { transition: transform 0.5s ease; height: 180px; object-fit: contain; width: 100%; }
+    .product-card:hover .product-img-wrapper img { transform: scale(1.08); }
+    .product-title { color: var(--sun-dark); transition: color 0.2s; font-size: 1.1rem; height: 2.7rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .product-card:hover .product-title { color: var(--sun-orange); }
+    .btn-details { background: rgba(249, 115, 22, 0.1); color: var(--sun-orange); font-weight: bold; border: none; }
+    .btn-details:hover { background: linear-gradient(135deg, var(--sun-orange), var(--sun-orange-light)); color: white; }
 
-    .search-pill { border: 1px solid #e2e8f0; transition: all 0.3s; }
-    .search-pill:focus-within { border-color: var(--sun-orange); box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1); }
+    /* Nút xem tất cả */
+    .btn-view-more { background: #fff; color: var(--sun-orange); border: 2px solid var(--sun-orange); border-radius: 50px; font-weight: 700; padding: 12px 35px; transition: 0.3s; text-decoration: none; display: inline-block; }
+    .btn-view-more:hover { background: var(--sun-orange); color: #fff; box-shadow: 0 5px 15px rgba(249, 115, 22, 0.3); }
 </style>
 
-<div class="rounded-5 p-5 mb-5 shadow-lg text-center text-white" style="background: linear-gradient(135deg, var(--sun-dark) 0%, var(--sun-darker) 100%);">
-    <div class="py-3">
-        <h1 class="fw-bolder display-4 mb-3"><i class="fa fa-sun text-warning me-2"></i>SunMobile</h1>
-        <p class="lead opacity-75 mb-0 fs-4">Đẳng cấp công nghệ - Bảo hành IMEI toàn quốc</p>
-    </div>
-</div>
+<div class="container my-5">
 
-<div class="card shadow-sm border-0 rounded-4 mb-5 bg-white">
-    <div class="card-body p-4">
-        <form asp-action="Index" method="get" class="row g-3 align-items-center">
-            <div class="col-md-5">
-                <div class="input-group input-group-lg search-pill rounded-pill p-1 bg-white">
-                    <span class="input-group-text bg-transparent border-0"><i class="fa fa-search text-muted ms-2"></i></span>
-                    <input type="text" name="searchString" value="@ViewBag.CurrentSearch" class="form-control border-0 shadow-none fs-6" placeholder="Bạn tìm iPhone 16, Samsung S25..." />
+    <div id="sunMobileCarousel" class="carousel slide hero-banner mb-4" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#sunMobileCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#sunMobileCarousel" data-bs-slide-to="1"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://www.apple.com/newsroom/images/2025/09/apple-unveils-iphone-17-pro-and-iphone-17-pro-max/article/Apple-iPhone-17-Pro-camera-close-up-250909_big.jpg.large_2x.jpg" class="d-block w-100" alt="IPhone 17 series">
+                <div class="hero-text-overlay d-none d-md-block">
+                    <span class="badge bg-danger mb-2 px-3 py-2 fs-6">MỚI RA MẮT</span>
+                    <h1 class="hero-title">iPhone 17 Pro</h1>
+                    <p class="fs-4">Đỉnh cao công nghệ nhiếp ảnh. Hiệu năng không giới hạn.</p>
+                    <a href="/Home/Shop?searchString=iPhone" class="btn btn-warning rounded-pill px-4 py-2 fw-bold shadow-sm">Xem trước ngay</a>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="input-group input-group-lg search-pill rounded-pill p-1 bg-light">
-                    <span class="input-group-text bg-transparent border-0"><i class="fa fa-filter text-muted ms-2"></i></span>
-                    <select name="categoryId" class="form-select border-0 bg-transparent shadow-none fs-6" asp-items="(IEnumerable<SelectListItem>)ViewBag.Categories">
-                        <option value="">Tất cả các hãng</option>
-                    </select>
+            <div class="carousel-item">
+                <img src="https://fdn.gsmarena.com/imgroot/news/25/01/samsung-galaxy-s25-ultra-official/-1200/gsmarena_007.jpg" class="d-block w-100" alt="Galaxy S25 Ultra AI">
+                <div class="hero-text-overlay d-none d-md-block">
+                    <span class="badge bg-primary mb-2 px-3 py-2 fs-6">KỶ NGUYÊN AI MỚI</span>
+                    <h1 class="hero-title">Galaxy S25 Ultra</h1>
+                    <p class="fs-4">Trí tuệ nhân tạo thế hệ mới. Trải nghiệm không biên giới.</p>
                 </div>
             </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-lg w-100 rounded-pill text-white fw-bold shadow-sm" style="background: linear-gradient(135deg, var(--sun-orange), var(--sun-orange-light)); border: none;">
-                    Lọc ngay
-                </button>
-            </div>
-        </form>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#sunMobileCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#sunMobileCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
     </div>
-</div>
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
-    @if (!Model.Any())
+    <div class="row g-3 mb-5 justify-content-center">
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="/Home/TrackOrder" class="utility-card d-flex align-items-center p-3 shadow-sm">
+                <div class="utility-icon-box text-primary me-3">
+                    <i class="fa fa-truck-fast"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold text-dark mb-1">Tra cứu Đơn hàng</h6>
+                    <p class="text-muted small mb-0">Theo dõi tình trạng vận chuyển</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="/Home/TrackImei" class="utility-card d-flex align-items-center p-3 shadow-sm">
+                <div class="utility-icon-box text-success me-3">
+                    <i class="fa fa-barcode"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold text-dark mb-1">Tra cứu mã IMEI</h6>
+                    <p class="text-muted small mb-0">Kiểm tra bảo hành chính hãng</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5 justify-content-center">
+        <div class="col-6 col-md-3">
+            <a href="/Home/Shop?searchString=iPhone" class="quick-category-box shadow-sm">
+                <i class="fab fa-apple cat-icon text-dark"></i>
+                <h6 class="fw-bold mb-0">Apple iPhone</h6>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/Home/Shop?searchString=Samsung" class="quick-category-box shadow-sm">
+                <i class="fa fa-mobile-screen cat-icon text-primary"></i>
+                <h6 class="fw-bold mb-0">Samsung Galaxy</h6>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/Home/Shop?searchString=Xiaomi" class="quick-category-box shadow-sm">
+                <i class="fa fa-bolt cat-icon text-warning"></i>
+                <h6 class="fw-bold mb-0">Xiaomi / Poco</h6>
+            </a>
+        </div>
+    </div>
+
+    <div class="mb-5 pt-3">
+        <h2 class="section-title"><span><i class="fa fa-fire"></i></span> Siêu Phẩm SunMobile</h2>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            @if (!hotPhones.Any())
+            {
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted fs-5">SunMobile đang cập nhật những mẫu điện thoại mới nhất!</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var item in hotPhones)
+                {
+                    <div class="col">
+                        <div class="card h-100 product-card bg-white shadow-sm border-0 rounded-4">
+                            <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="product-img-wrapper d-block rounded-top-4">
+                                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://via.placeholder.com/300x300?text=SunMobile" : item.ImageUrl)" alt="@item.Name">
+                            </a>
+                            
+                            <div class="card-body d-flex flex-column p-4 pt-0">
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
+                                    <h6 class="product-title fw-bold mb-2 text-truncate">@item.Name</h6>
+                                </a>
+                                
+                                <div class="mt-auto">
+                                    <span class="fs-4 fw-bolder text-danger d-block mb-3">@item.Price.ToString("N0") đ</span>
+                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="btn btn-details w-100 rounded-pill py-2 shadow-sm">
+                                        <i class="fa fa-eye me-1"></i> Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <div class="text-center mt-5">
+            <a href="/Home/Shop" class="btn btn-view-more">Xem tất cả điện thoại <i class="fa fa-angle-right ms-1"></i></a>
+        </div>
+    </div>
+
+    @if (hasTablets)
     {
-        <div class="col-12 text-center py-5">
-            <div class="py-5 bg-light rounded-5">
-                <i class="fa fa-ghost fs-1 text-muted mb-3 d-block"></i>
-                <h5 class="text-muted fw-bold">Ối! SunMobile chưa có máy này rồi...</h5>
-                <a href="/" class="btn btn-link text-orange text-decoration-none">Xem tất cả sản phẩm</a>
+        var tabletList = Model.Where(p => p.Category != null && p.Category.Name == "Máy tính bảng").OrderByDescending(p => p.Id).Take(4);
+        <div class="mb-5 pt-4">
+            <h2 class="section-title"><span><i class="fa fa-star"></i></span> Tablet Thời Thượng</h2>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                @foreach (var item in tabletList)
+                {
+                    <div class="col">
+                        <div class="card h-100 product-card bg-white shadow-sm border-0 rounded-4">
+                            <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="product-img-wrapper d-block rounded-top-4">
+                                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://via.placeholder.com/300x300?text=Tablet" : item.ImageUrl)" alt="@item.Name">
+                            </a>
+                            <div class="card-body d-flex flex-column p-4 pt-0">
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
+                                    <h6 class="product-title fw-bold mb-2 text-truncate">@item.Name</h6>
+                                </a>
+                                <div class="mt-auto">
+                                    <span class="fs-4 fw-bolder text-danger d-block mb-3">@item.Price.ToString("N0") đ</span>
+                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="btn btn-details w-100 rounded-pill py-2 shadow-sm">
+                                        <i class="fa fa-eye me-1"></i> Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-5">
+                <a href="/Home/Shop?searchString=Máy tính bảng" class="btn btn-view-more">Xem tất cả máy tính bảng <i class="fa fa-angle-right ms-1"></i></a>
             </div>
         </div>
     }
-    else
-    {
-        @foreach (var item in Model)
-        {
-            <div class="col">
-                <div class="card h-100 product-card rounded-4 bg-white shadow-sm border-0">
-                    <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="product-img-wrapper d-block text-center rounded-top-4">
-                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://via.placeholder.com/300x300?text=SunMobile" : item.ImageUrl)" alt="@item.Name">
-                    </a>
-                    
-                    <div class="card-body d-flex flex-column p-4">
-                        <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
-                            <h5 class="product-title fw-bold mb-3">@item.Name</h5>
-                        </a>
-                        
-                        <div class="mt-auto">
-                            <div class="d-flex align-items-baseline mb-3">
-                                <span class="fs-4 fw-bolder text-danger">@item.Price.ToString("N0")</span>
-                                <span class="ms-1 fw-bold text-danger">đ</span>
-                            </div>
-                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
-                                <input type="hidden" name="productId" value="@item.Id" />
-                                <input type="hidden" name="quantity" value="1" />
-                                <button type="submit" class="btn btn-buy-now w-100 rounded-pill py-2 shadow-sm">
-                                    <i class="fa fa-cart-plus me-1"></i> Chọn mua
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+
+    <div class="row g-4 mt-2 mb-5">
+        <div class="col-md-4">
+            <div class="bg-white p-4 rounded-4 shadow-sm text-center h-100 border">
+                <i class="fa fa-truck-fast mb-3" style="font-size: 2.5rem; color: var(--sun-orange);"></i>
+                <h5 class="fw-bold">Giao Hàng Siêu Tốc</h5>
+                <p class="text-muted mb-0 small">Nhận hàng trong 2 giờ tại nội thành. Miễn phí vận chuyển toàn quốc.</p>
             </div>
-        }
-    }
+        </div>
+        <div class="col-md-4">
+            <div class="bg-white p-4 rounded-4 shadow-sm text-center h-100 border">
+                <i class="fa fa-shield-halved mb-3" style="font-size: 2.5rem; color: var(--sun-orange);"></i>
+                <h5 class="fw-bold">Bảo Hành Chính Hãng</h5>
+                <p class="text-muted mb-0 small">Cam kết đền bù 200% nếu phát hiện hàng giả. Lỗi 1 đổi 1 trong 30 ngày.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-white p-4 rounded-4 shadow-sm text-center h-100 border">
+                <i class="fa fa-headset mb-3" style="font-size: 2.5rem; color: var(--sun-orange);"></i>
+                <h5 class="fw-bold">Hỗ Trợ Tận Tâm</h5>
+                <p class="text-muted mb-0 small">Đội ngũ chuyên gia kỹ thuật hỗ trợ cài đặt và giải đáp 24/7.</p>
+            </div>
+        </div>
+    </div>
+
 </div>

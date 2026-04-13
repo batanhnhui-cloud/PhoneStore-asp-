@@ -1,0 +1,23 @@
+﻿@model PhoneStore.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Sửa thông tin khách hàng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="container-fluid py-4">
+    <div class="card shadow-sm border-0 rounded-4 p-4" style="max-width: 600px; margin: 0 auto;">
+        <h4 class="fw-bold mb-4">Sửa thông tin: @Model.Email</h4>
+        <form asp-action="EditCustomer" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <div class="mb-3">
+                <label class="form-label fw-bold">Họ và tên</label>
+                <input type="text" name="fullName" class="form-control" value="@Model.FullName" required />
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-bold">Số điện thoại</label>
+                <input type="text" name="phoneNumber" class="form-control" value="@Model.PhoneNumber" />
+            </div>
+            <button type="submit" class="btn btn-sun w-100 fw-bold py-2">Lưu thay đổi</button>
+            <a asp-action="ManageCustomers" class="btn btn-light w-100 mt-2">Hủy</a>
+        </form>
+    </div>
+</div>

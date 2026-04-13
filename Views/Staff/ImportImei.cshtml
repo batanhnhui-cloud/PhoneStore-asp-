@@ -1,55 +1,235 @@
 ﻿@{
-    ViewData["Title"] = "Nhập Kho IMEI";
-    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Dùng chung layout có thanh menu bên trái
+    ViewData["Title"] = "Nhập kho thiết bị & EDI - SunMobile";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; 
 }
 
-<div class="container-fluid px-4 mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bolder text-dark mb-0"><i class="fa fa-barcode text-primary me-2"></i>Nhập Kho Thiết Bị (IMEI)</h2>
+<style>
+    .page-header { background: linear-gradient(135deg, #1e293b, #0f172a); color: white; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; }
+    .scanner-box { border: 2px dashed #cbd5e1; border-radius: 16px; padding: 3rem 2rem; text-align: center; background: #f8fafc; }
+    .scanner-input { font-size: 1.5rem; text-align: center; font-weight: bold; letter-spacing: 2px; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; width: 100%; max-width: 500px; margin: 0 auto; }
+    .edi-result-card { display: none; }
+
+    /* =========================================
+       CSS CHO MENU NỔI (FAB) GÓC MÀN HÌNH
+       ========================================= */
+    .fab-container { position: fixed; bottom: 30px; right: 30px; z-index: 999; display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
+    .fab-button { width: 65px; height: 65px; border-radius: 50%; background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); cursor: pointer; border: none; transition: all 0.3s; }
+    .fab-button:hover { background: #f97316; transform: scale(1.05) rotate(90deg); }
+    .fab-menu { display: none; flex-direction: column; gap: 12px; align-items: flex-end; }
+    .fab-container:hover .fab-menu { display: flex; animation: slideUp 0.3s ease; }
+    .fab-item { display: flex; align-items: center; gap: 12px; background: white; padding: 12px 24px; border-radius: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; color: #333; font-weight: bold; border: 2px solid transparent; transition: all 0.2s; user-select: none; }
+    .fab-item:hover { border-color: #f97316; color: #f97316; transform: translateX(-5px); }
+    @@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div class="container-fluid py-2">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bolder mb-1"><i class="fa fa-barcode text-warning me-2"></i> Trạm Quét Mã Nhập Kho (EDI)</h2>
+            <p class="mb-0 opacity-75">Quét mã vạch trên thùng carton để đối chiếu với vận đơn điện tử</p>
+        </div>
     </div>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success fw-bold shadow-sm rounded-3 border-0"><i class="fa fa-check-circle me-2"></i> @TempData["SuccessMessage"]</div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger fw-bold shadow-sm rounded-3 border-0"><i class="fa fa-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]</div>
-    }
+    @if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger fw-bold">@TempData["ErrorMessage"]</div> }
+    @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success fw-bold">@TempData["SuccessMessage"]</div> }
 
-    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-        <div class="card-header bg-white border-bottom py-3">
-            <h5 class="mb-0 fw-bold text-dark"><i class="fa fa-box-open me-2 text-warning"></i>Thông tin lô hàng</h5>
+    <div class="row g-4">
+        <div class="col-lg-12">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-5">
+                    <div class="scanner-box" id="scannerArea">
+                        <i class="fa fa-qrcode mb-3 text-muted" style="font-size: 4rem;"></i>
+                        <h4 class="fw-bold text-dark mb-3">Sử dụng súng bắn mã vạch</h4>
+                        <div class="d-flex justify-content-center gap-2 max-w-md mx-auto">
+                            <input type="text" id="masterBarcode" class="scanner-input form-control" placeholder="Mã thùng Carton..." autofocus autocomplete="off">
+                            <button class="btn btn-dark fw-bold px-4 rounded-3" onclick="simulateEdiScan()"><i class="fa fa-search"></i> Đối chiếu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body p-4">
+
+        <div class="col-lg-12 edi-result-card" id="ediResultCard">
+            <div class="card shadow-sm border-0 rounded-4 border-top border-success border-5">
+                <div class="card-body p-4 bg-light">
+                    <h5 class="fw-bold text-success mb-3"><i class="fa fa-check-circle me-2"></i>Khớp dữ liệu Hãng: <span id="resultBoxId" class="text-dark"></span></h5>
+                    <div class="row g-4 mb-4 text-center">
+                        <div class="col-md-4"><div class="p-3 bg-white rounded shadow-sm"><small>Sản phẩm</small><h5 id="lblProduct" class="mb-0 mt-1"></h5></div></div>
+                        <div class="col-md-4"><div class="p-3 bg-white rounded shadow-sm"><small>Số lượng</small><h5 id="lblQuantity" class="text-primary mb-0 mt-1"></h5></div></div>
+                        <div class="col-md-4"><div class="p-3 bg-white rounded shadow-sm"><small>Kho nhận</small><h5 id="lblBranch" class="mb-0 mt-1"></h5></div></div>
+                    </div>
+                    <h6><i class="fa fa-list me-2"></i>Danh sách IMEI trong kiện:</h6>
+                    <div class="row g-2 font-monospace small mt-2" id="imeiListContainer"></div>
+                </div>
+                <div class="card-footer bg-white p-4 text-end">
+                    <button class="btn btn-light px-4 me-2 fw-bold" onclick="resetScanner()">Hủy</button>
+                    <button class="btn btn-success px-5 fw-bold" onclick="confirmImport()"><i class="fa fa-download me-2"></i>Xác Nhận Nhập Kho</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="fab-container">
+    <div class="fab-menu">
+        <div class="fab-item" onclick="openHistoryModal()">
+            <i class="fa fa-clock-rotate-left text-primary"></i> Xem Lịch Sử EDI
+        </div>
+        <div class="fab-item" data-bs-toggle="modal" data-bs-target="#manualImportModal">
+            <i class="fa fa-keyboard text-success"></i> Nhập Máy Lẻ (Thủ Công)
+        </div>
+    </div>
+    <button class="fab-button"><i class="fa fa-bars"></i></button>
+</div>
+
+<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-light border-bottom-0 p-4">
+                <h5 class="modal-title fw-bold"><i class="fa fa-history text-primary me-2"></i>Lịch sử nhập kho (Các mã thùng đã duyệt)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4 py-3">Mã Thùng</th>
+                            <th class="py-3">Sản phẩm</th>
+                            <th class="py-3">Chi nhánh</th>
+                            <th class="text-center py-3">Số lượng</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <tr><td colspan="4" class="text-center py-5 text-muted"><i class="fa fa-spinner fa-spin me-2"></i> Đang tải dữ liệu...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer bg-light border-top-0 p-3">
+                <button type="button" class="btn btn-secondary fw-bold rounded-pill px-4" data-bs-dismiss="modal">Đóng cửa sổ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="manualImportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-light border-bottom-0 p-4">
+                <h5 class="modal-title fw-bold"><i class="fa fa-keyboard text-success me-2"></i>Nhập máy lẻ (Thủ công)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
             <form asp-action="ImportImei" method="post">
-                <div class="row mb-4">
-                    <div class="col-md-6 mb-3 mb-md-0">
-                        <label class="form-label fw-bold text-muted small">1. NHẬP VÀO CHI NHÁNH <span class="text-danger">*</span></label>
-                        <select name="branchId" class="form-select form-select-lg shadow-sm border-0 bg-light" asp-items="ViewBag.Branches" required>
-                            <option value="">-- Click để chọn chi nhánh kho --</option>
-                        </select>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Chi nhánh nhận</label>
+                        <select name="branchId" class="form-select" asp-items="ViewBag.Branches"></select>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-muted small">2. LOẠI ĐIỆN THOẠI <span class="text-danger">*</span></label>
-                        <select name="productId" class="form-select form-select-lg shadow-sm border-0 bg-light" asp-items="ViewBag.Products" required>
-                            <option value="">-- Click để chọn tên dòng máy --</option>
-                        </select>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Sản phẩm</label>
+                        <select name="productId" class="form-select" asp-items="ViewBag.Products"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Danh sách mã IMEI <small class="text-danger">(15 số)</small></label>
+                        <textarea name="imeiList" class="form-control font-monospace" rows="5" placeholder="Nhập IMEI lẻ vào đây, mỗi dòng 1 mã..."></textarea>
                     </div>
                 </div>
-
-                <div class="mb-4">
-                    <label class="form-label fw-bold text-muted small">3. DANH SÁCH MÃ IMEI <span class="text-danger">*</span></label>
-                    <p class="text-muted small mb-2"><i class="fa fa-lightbulb text-warning me-1"></i><strong>Mẹo:</strong> Đặt con trỏ chuột vào ô bên dưới và dùng súng bắn mã vạch quét liên tục các hộp điện thoại. Bạn cũng có thể copy một cột IMEI từ Excel và Paste thẳng vào đây.</p>
-                    <textarea name="imeiList" class="form-control shadow-sm bg-light border-0 font-monospace fs-5" rows="8" placeholder="Ví dụ:&#10;351234567890123&#10;351234567890124" required></textarea>
-                </div>
-
-                <div class="d-flex justify-content-end border-top pt-4">
-                    <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm">
-                        <i class="fa fa-save me-2"></i> Xác Nhận Lưu Kho
-                    </button>
+                <div class="modal-footer bg-light border-top-0 p-3">
+                    <button type="button" class="btn btn-light fw-bold px-4" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success fw-bold px-4 w-100"><i class="fa fa-save me-2"></i>Lưu vào kho</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // =========================================
+        // CODE GỐC CỦA BẠN (GIỮ NGUYÊN 100%)
+        // =========================================
+        async function simulateEdiScan() {
+            const barcode = document.getElementById('masterBarcode').value.trim();
+            if (!barcode) return alert("Nhập mã thùng!");
+
+            try {
+                const response = await fetch('/Staff/ProcessEdiBarcode', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ MasterBarcode: barcode })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('resultBoxId').innerText = barcode;
+                    document.getElementById('lblProduct').innerText = data.productName;
+                    document.getElementById('lblQuantity').innerText = data.quantity + " máy";
+                    document.getElementById('lblBranch').innerText = data.branchName;
+
+                    const container = document.getElementById('imeiListContainer');
+                    container.innerHTML = ''; 
+                    data.imeiList.forEach(imei => {
+                        container.innerHTML += `<div class="col-md-3"><div class="p-2 border rounded bg-white"><i class="fa fa-barcode text-success me-2"></i>${imei}</div></div>`;
+                    });
+
+                    document.getElementById('ediResultCard').style.display = 'block';
+                } else {
+                    alert(data.message);
+                    resetScanner();
+                }
+            } catch (error) { alert("Lỗi hệ thống!"); }
+        }
+
+        async function confirmImport() {
+            const barcode = document.getElementById('masterBarcode').value.trim();
+            try {
+                const response = await fetch('/Staff/ConfirmEdiImport', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ MasterBarcode: barcode })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = '/Staff/Inventory'; 
+                } else alert(data.message);
+            } catch (error) { alert("Lỗi ghi CSDL!"); }
+        }
+
+        document.getElementById('masterBarcode').addEventListener('keypress', e => { if (e.key === 'Enter') simulateEdiScan(); });
+        function resetScanner() { document.getElementById('masterBarcode').value = ''; document.getElementById('ediResultCard').style.display = 'none'; }
+
+        // =========================================
+        // JAVASCRIPT GỌI API LẤY LỊCH SỬ CHO CỬA SỔ
+        // =========================================
+        async function openHistoryModal() {
+            var historyModal = new bootstrap.Modal(document.getElementById('historyModal'));
+            historyModal.show();
+
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-5 text-muted"><i class="fa fa-spinner fa-spin me-2"></i> Đang tải dữ liệu...</td></tr>';
+
+            try {
+                const response = await fetch('/Staff/GetImportHistory');
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    tbody.innerHTML = '';
+                    result.data.forEach(item => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td class="ps-4 fw-bold font-monospace text-primary">#${item.masterBarcode}</td>
+                                <td class="fw-bold text-dark">${item.productName}</td>
+                                <td class="text-muted"><i class="fa fa-store me-1"></i>${item.branchName}</td>
+                                <td class="text-center fw-bolder fs-5 text-success">+${item.quantity}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-5 text-muted fw-bold">Chưa có dữ liệu nhập lô nào.</td></tr>';
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-5 text-danger fw-bold"><i class="fa fa-triangle-exclamation me-2"></i> Lỗi không lấy được dữ liệu.</td></tr>';
+            }
+        }
+    </script>
+}

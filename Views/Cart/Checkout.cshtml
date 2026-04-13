@@ -1,62 +1,115 @@
 ﻿@model IEnumerable<PhoneStore.Models.CartItem>
 @{
-    ViewData["Title"] = "Xác nhận Thanh toán";
+    ViewData["Title"] = "Thanh toán";
+    var savedAddresses = ViewBag.SavedAddresses as List<PhoneStore.Models.CustomerAddress>;
 }
 
-<div class="container mt-5 mb-5">
-    <h2 class="fw-bold text-success mb-4"><i class="fa fa-truck fast me-2"></i>Thông tin giao hàng</h2>
+<div class="container py-5">
+    <h2 class="fw-bolder mb-4"><i class="fa fa-credit-card text-warning me-2"></i> Xác nhận thanh toán</h2>
 
-    <div class="row">
-        <div class="col-md-7 mb-4">
-            <div class="card shadow-sm border-0 p-4">
-                <form asp-action="Checkout" method="post">
-                    @if (!User.Identity.IsAuthenticated)
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 border-bottom pb-3">Thông tin giao hàng</h5>
+                    
+                    @* NẾU CÓ SỔ ĐỊA CHỈ THÌ HIỆN DROPDOWN ĐỂ KHÁCH CHỌN NHANH *@
+                    @if (savedAddresses != null && savedAddresses.Any())
                     {
-                        <div class="alert alert-info small mb-4">
-                            <i class="fa fa-info-circle me-1"></i> Bạn đang mua hàng với tư cách <b>Khách vãng lai</b>. <a asp-controller="Account" asp-action="Login">Đăng nhập</a> để quản lý đơn hàng tốt hơn!
+                        <div class="alert alert-info rounded-3 mb-4">
+                            <label class="fw-bold mb-2"><i class="fa fa-book me-2"></i>Chọn từ Sổ địa chỉ của bạn:</label>
+                            <select id="addressSelector" class="form-select form-select-lg shadow-sm" onchange="autoFillAddress()">
+                                <option value="">-- Nhập địa chỉ mới bên dưới --</option>
+                                @foreach (var addr in savedAddresses)
+                                {
+                                    <option value="@addr.Id"
+                                            data-name="@addr.ReceiverName"
+                                            data-phone="@addr.Phone"
+                                            data-address="@addr.FullAddress"
+                                            selected="@(addr.IsDefault ? "selected" : null)">
+                                        @(addr.IsDefault ? "[Mặc định] " : "") @addr.ReceiverName - @addr.Phone (@addr.FullAddress)
+                                    </option>
+                                }
+                            </select>
                         </div>
                     }
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Họ và tên người nhận</label>
-                        <input name="customerName" class="form-control" value="@ViewBag.CustomerName" required placeholder="Nhập tên..." />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Số điện thoại</label>
-                        <input name="phone" class="form-control" value="@ViewBag.Phone" required placeholder="Nhập số điện thoại..." />
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Địa chỉ nhận hàng chi tiết</label>
-                        <textarea name="address" class="form-control" rows="3" required placeholder="Số nhà, tên đường, phường/xã, quận/huyện..."></textarea>
-                    </div>
+                    <form asp-action="Checkout" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Người nhận hàng</label>
+                            <input type="text" id="txtName" name="customerName" class="form-control" required placeholder="Nhập họ tên...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Số điện thoại</label>
+                            <input type="text" id="txtPhone" name="phone" class="form-control" required placeholder="Nhập số điện thoại liên hệ...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Chi nhánh phụ trách giao hàng</label>
+                            <select name="branchId" class="form-select" asp-items="ViewBag.Branches"></select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Địa chỉ nhận hàng chi tiết</label>
+                            <textarea id="txtAddress" name="address" class="form-control" rows="3" required placeholder="Số nhà, Tên đường, Xã/Phường..."></textarea>
+                        </div>
 
-                    <button type="submit" class="btn btn-primary fw-bold py-3 w-100 fs-5 shadow">
-                        <i class="fa fa-check-circle me-2"></i> HOÀN TẤT ĐẶT HÀNG
-                    </button>
-                </form>
+                        <button type="submit" class="btn btn-sun w-100 py-3 rounded-pill fs-5 shadow-sm">
+                            <i class="fa fa-check-circle me-2"></i> ĐẶT HÀNG NGAY
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-5 mb-4">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-dark text-white fw-bold py-3">Mã đơn hàng tạm tính</div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush mb-3">
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 rounded-4 bg-light">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 border-bottom pb-3">Tóm tắt đơn hàng</h5>
+                    <ul class="list-group list-group-flush bg-transparent mb-3">
                         @foreach (var item in Model)
                         {
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <div><span class="fw-bold">@item.ProductName</span> <span class="badge bg-secondary ms-1">x @item.Quantity</span></div>
-                                <span class="text-danger fw-bold">@item.Total.ToString("N0") đ</span>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between px-0">
+                                <div>
+                                    <h6 class="my-0 fw-bold">@item.ProductName</h6>
+                                    <small class="text-muted">Số lượng: @item.Quantity</small>
+                                </div>
+                                <span class="text-dark fw-bold">@((item.Price * item.Quantity).ToString("N0"))đ</span>
                             </li>
                         }
                     </ul>
-                    <hr />
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-0">TỔNG CỘNG</h5>
-                        <h3 class="text-danger fw-bold mb-0">@Model.Sum(x => x.Total).ToString("N0") đ</h3>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <h5 class="fw-bold mb-0">TỔNG TIỀN:</h5>
+                        <h3 class="text-danger fw-bolder mb-0">@Model.Sum(c => c.Price * c.Quantity).ToString("N0") đ</h3>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // HÀM JS ĐỂ TỰ ĐỘNG ĐIỀN THÔNG TIN TỪ SỔ ĐỊA CHỈ XUỐNG FORM BÊN DƯỚI
+        function autoFillAddress() {
+            var selector = document.getElementById("addressSelector");
+            if (selector && selector.selectedIndex > 0) {
+                var selectedOption = selector.options[selector.selectedIndex];
+                
+                // Lấy data từ các thuộc tính data- của thẻ option
+                document.getElementById("txtName").value = selectedOption.getAttribute("data-name");
+                document.getElementById("txtPhone").value = selectedOption.getAttribute("data-phone");
+                document.getElementById("txtAddress").value = selectedOption.getAttribute("data-address");
+            } else {
+                // Nếu khách chọn "Nhập địa chỉ mới" thì xóa trắng form
+                document.getElementById("txtName").value = "";
+                document.getElementById("txtPhone").value = "";
+                document.getElementById("txtAddress").value = "";
+            }
+        }
+
+        // Chạy hàm này 1 lần lúc vừa load trang để lấp đầy địa chỉ Mặc định luôn
+        window.onload = function() {
+            autoFillAddress();
+        };
+    </script>
+}

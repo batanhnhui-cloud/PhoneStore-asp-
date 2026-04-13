@@ -1,7 +1,7 @@
 ﻿@using System.Text.Json
 @model PhoneStore.Models.Product
 @{
-    ViewData["Title"] = Model.Name + " - SunMobile";
+    ViewData["Title"] = Model.Name + " - SunMobile";    
 
     // Logic xử lý JSON Cấu hình
     Dictionary<string, List<string>> specDictionary = new Dictionary<string, List<string>>();
@@ -20,6 +20,16 @@
             }
         } catch { }
     }
+
+    // Logic tính toán hiển thị Đánh giá
+    var reviews = Model.Reviews?.OrderByDescending(r => r.CreatedAt).ToList() ?? new List<PhoneStore.Models.Review>();
+    double avgRating = reviews.Any() ? Math.Round(reviews.Average(r => r.Rating), 1) : 0;
+    bool canReview = ViewBag.CanReview ?? false;
+    bool hasReviewed = ViewBag.HasReviewed ?? false;
+
+    // Logic xử lý Hỏi đáp (Q&A)
+    var allComments = Model.Comments?.OrderBy(c => c.CreatedAt).ToList() ?? new List<PhoneStore.Models.Comment>();
+    var topLevelComments = allComments.Where(c => c.ParentCommentId == null).OrderByDescending(c => c.CreatedAt).ToList();
 }
 
 <style>
@@ -51,9 +61,25 @@
     .spec-value { flex: 1; color: var(--sun-dark); font-weight: 600; font-size: 0.95rem; white-space: pre-line; }
 
     .policy-box { background: #f1f5f9; border-radius: 15px; padding: 15px; }
+
+    /* CSS Chọn sao đánh giá */
+    .star-rating-form { direction: rtl; display: inline-block; padding: 10px 0; }
+    .star-rating-form input[type=radio] { display: none; }
+    .star-rating-form label { color: #ddd; font-size: 2rem; padding: 0 2px; cursor: pointer; transition: all 0.2s; }
+    .star-rating-form label:hover, .star-rating-form label:hover ~ label, .star-rating-form input[type=radio]:checked ~ label { color: #facc15; }
+
+    /* CSS Tabs Q&A */
+    .nav-tabs .nav-link { color: #64748b; font-weight: 700; border: none; border-bottom: 3px solid transparent; padding: 15px 30px; font-size: 1.1rem; }
+    .nav-tabs .nav-link.active { color: var(--sun-orange); border-bottom: 3px solid var(--sun-orange); background: transparent; }
+    .comment-reply { background-color: #f8fafc; border-left: 4px solid #cbd5e1; padding: 15px; margin-top: 10px; border-radius: 0 12px 12px 0; }
+    .comment-reply.admin-reply { border-left-color: var(--sun-orange); background-color: #fffaf5; }
 </style>
 
 <div class="container my-5">
+    
+    @if (TempData["SuccessMsg"] != null) { <div class="alert alert-success fw-bold rounded-4 shadow-sm mb-4"><i class="fa fa-check-circle me-2"></i>@TempData["SuccessMsg"]</div> }
+    @if (TempData["ErrorMsg"] != null) { <div class="alert alert-danger fw-bold rounded-4 shadow-sm mb-4"><i class="fa fa-triangle-exclamation me-2"></i>@TempData["ErrorMsg"]</div> }
+
     <nav class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/" class="text-muted text-decoration-none">Cửa hàng</a></li>
@@ -61,7 +87,7 @@
         </ol>
     </nav>
 
-    <div class="row g-5">
+    <div class="row g-5 mb-5">
         <div class="col-lg-6">
             <div class="img-main-wrapper shadow-sm">
                 <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "https://via.placeholder.com/600x600" : Model.ImageUrl)" class="img-main" alt="@Model.Name">
@@ -71,8 +97,15 @@
         <div class="col-lg-6">
             <div class="ps-lg-4">
                 <div class="brand-badge mb-3">@Model.Category?.Name</div>
-                <h1 class="display-5 fw-bolder text-dark mb-3">@Model.Name</h1>
+                <h1 class="display-5 fw-bolder text-dark mb-2">@Model.Name</h1>
                 
+                <div class="d-flex align-items-center mb-4">
+                    <div class="text-warning fs-5 me-2">
+                        @for(int i=1; i<=5; i++) { <i class="fa fa-star @(i <= Math.Round(avgRating) ? "" : "text-muted opacity-25")"></i> }
+                    </div>
+                    <span class="text-muted fw-bold">(@avgRating/5 từ @reviews.Count đánh giá)</span>
+                </div>
+
                 <div class="price-tag mb-4">
                     @Model.Price.ToString("N0") <span class="fs-4 fw-normal">đ</span>
                 </div>
@@ -117,4 +150,232 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="bg-white shadow-sm border-0 rounded-4 p-4 p-md-5">
+                
+                <ul class="nav nav-tabs mb-4 justify-content-center border-bottom" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button"><i class="fa fa-star me-2 text-warning"></i> Đánh giá (@reviews.Count)</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="qa-tab" data-bs-toggle="tab" data-bs-target="#qa" type="button"><i class="fa fa-comments me-2 text-primary"></i> Hỏi đáp (@topLevelComments.Count)</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="reviews" role="tabpanel">
+                        <div class="bg-light p-4 rounded-4 mb-5 border border-2">
+                            @if (!User.Identity!.IsAuthenticated)
+                            {
+                                <div class="text-center py-3">
+                                    <h5 class="text-muted fw-bold mb-3">Bạn cần đăng nhập để đánh giá</h5>
+                                    <a href="/Account/Login" class="btn btn-outline-dark rounded-pill px-4 fw-bold">Đăng nhập ngay</a>
+                                </div>
+                            }
+                            else if (hasReviewed)
+                            {
+                                <div class="text-center text-success py-3">
+                                    <i class="fa fa-check-circle fs-2 mb-2"></i>
+                                    <h5 class="fw-bold mb-0">Bạn đã đánh giá sản phẩm này rồi. Cảm ơn bạn!</h5>
+                                </div>
+                            }
+                            else if (!canReview)
+                            {
+                                <div class="text-center text-muted py-3">
+                                    <i class="fa fa-lock fs-2 mb-2 opacity-50"></i>
+                                    <h5 class="fw-bold mb-0">Chỉ khách hàng đã mua sản phẩm này mới có thể đánh giá.</h5>
+                                </div>
+                            }
+                            else
+                            {
+                                <h5 class="fw-bold mb-0 text-dark">Viết đánh giá của bạn</h5>
+                                <form asp-action="AddReview" method="post">
+                                    <input type="hidden" name="productId" value="@Model.Id" />
+                                    
+                                    <div class="star-rating-form">
+                                        <input type="radio" id="star5" name="rating" value="5" required /><label for="star5" title="5 sao"><i class="fa fa-star"></i></label>
+                                        <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 sao"><i class="fa fa-star"></i></label>
+                                        <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 sao"><i class="fa fa-star"></i></label>
+                                        <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 sao"><i class="fa fa-star"></i></label>
+                                        <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 sao"><i class="fa fa-star"></i></label>
+                                    </div>
+
+                                    <textarea name="comment" class="form-control rounded-3 mb-3 border-0 shadow-sm" rows="3" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm này..." required></textarea>
+                                    <button type="submit" class="btn btn-sun rounded-pill px-4 fw-bold shadow-sm" style="background-color: var(--sun-orange); color: white;">Gửi đánh giá</button>
+                                </form>
+                            }
+                        </div>
+
+                        <div>
+                            @if (!reviews.Any())
+                            {
+                                <div class="text-center text-muted py-4">
+                                    <i class="fa fa-comment-slash fs-1 mb-2 opacity-25"></i>
+                                    <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                foreach (var review in reviews)
+                                {
+                                    <div class="d-flex mb-4 pb-4 border-bottom">
+                                        <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center me-3 flex-shrink-0" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                            <i class="fa fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1">
+                                                @(review.User?.FullName ?? review.User?.UserName?.Split('@')[0] ?? "Khách hàng")
+                                                <span class="badge bg-success bg-opacity-10 text-success ms-2 fw-normal"><i class="fa fa-circle-check me-1"></i>Đã mua hàng</span>
+                                            </h6>
+                                            <div class="text-warning small mb-2">
+                                                @for(int i=1; i<=5; i++) { <i class="fa fa-star @(i <= review.Rating ? "" : "text-muted opacity-25")"></i> }
+                                                <span class="text-muted ms-2" style="font-size: 0.8rem;">@review.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                            </div>
+                                            <p class="text-dark mb-0 lh-base">@review.Comment</p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="qa" role="tabpanel">
+                        <div class="bg-light p-4 rounded-4 mb-5 border border-2">
+                            <h5 class="fw-bold mb-3 text-dark">Bạn có thắc mắc về sản phẩm này?</h5>
+                            
+                            <form asp-action="AddComment" method="post">
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <textarea name="content" class="form-control rounded-3 mb-3 border-0 shadow-sm" rows="3" placeholder="Xin mời để lại câu hỏi, SunMobile sẽ trả lời ngay trong 1h..." required></textarea>
+                                
+                                @if (!User.Identity!.IsAuthenticated)
+                                {
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-2">
+                                            <select name="guestGender" class="form-select border-0 shadow-sm" required>
+                                                <option value="Anh">Anh</option>
+                                                <option value="Chị">Chị</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text" name="guestName" class="form-control border-0 shadow-sm" placeholder="Họ và tên (bắt buộc)" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="tel" name="guestPhone" class="form-control border-0 shadow-sm" placeholder="Số điện thoại (bắt buộc)" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="email" name="guestEmail" class="form-control border-0 shadow-sm" placeholder="Email (tùy chọn)">
+                                        </div>
+                                    </div>
+                                }
+                                <button type="submit" class="btn btn-dark rounded-pill px-4 fw-bold shadow-sm">Gửi câu hỏi</button>
+                            </form>
+                        </div>
+
+                        <div>
+                            @if (!topLevelComments.Any()) 
+                            { 
+                                <div class="text-center text-muted py-4"><i class="fa fa-circle-question fs-1 mb-2 opacity-25"></i><p>Chưa có câu hỏi nào. Hãy là người đầu tiên đặt câu hỏi!</p></div> 
+                            }
+                            else 
+                            { 
+                                foreach (var comment in topLevelComments) 
+                                {
+                                    // BỎ HIỂN THỊ GUEST GENDER: Chỉ lấy GuestName
+                                    string commenterName = comment.UserId != null 
+                                        ? (comment.User?.FullName ?? comment.User?.UserName?.Split('@')[0] ?? "Khách hàng") 
+                                        : comment.GuestName ?? "Khách hàng";
+
+                                    <div class="mb-4 pb-4 border-bottom">
+                                        <div class="d-flex mb-2">
+                                            <div class="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center me-3 flex-shrink-0" style="width: 45px; height: 45px;"><i class="fa fa-user"></i></div>
+                                            <div class="w-100">
+                                                <h6 class="fw-bold mb-1">@commenterName <span class="text-muted small fw-normal ms-2">@comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span></h6>
+                                                <p class="text-dark mb-1 fw-medium">@comment.Content</p>
+                                                
+                                                <button class="btn btn-sm btn-link text-primary text-decoration-none p-0 fw-bold" data-bs-toggle="collapse" data-bs-target="#reply-form-@comment.Id">Trả lời</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="collapse mt-2 ms-5" id="reply-form-@comment.Id">
+                                            <form asp-action="AddComment" method="post" class="p-3 bg-light rounded-3 border mb-3">
+                                                <input type="hidden" name="productId" value="@Model.Id" />
+                                                <input type="hidden" name="parentCommentId" value="@comment.Id" />
+                                                
+                                                <textarea name="content" class="form-control form-control-sm rounded-3 mb-2 border-0" rows="2" placeholder="Nhập câu trả lời..." required></textarea>
+                                                
+                                                @if (!User.Identity!.IsAuthenticated)
+                                                {
+                                                    <div class="row g-2 mb-2">
+                                                        <div class="col-md-3"><select name="guestGender" class="form-select form-select-sm border-0" required><option value="Anh">Anh</option><option value="Chị">Chị</option></select></div>
+                                                        <div class="col-md-4"><input type="text" name="guestName" class="form-control form-control-sm border-0" placeholder="Họ tên *" required></div>
+                                                        <div class="col-md-5"><input type="tel" name="guestPhone" class="form-control form-control-sm border-0" placeholder="Số ĐT *" required></div>
+                                                    </div>
+                                                }
+                                                <button type="submit" class="btn btn-sm btn-dark rounded-pill px-4">Gửi</button>
+                                            </form>
+                                        </div>
+
+                                        @{
+                                            var replies = allComments.Where(c => c.ParentCommentId == comment.Id).OrderBy(c => c.CreatedAt).ToList();
+                                        }
+                                        @if (replies.Any())
+                                        {
+                                            <div class="ms-5 mt-2">
+                                                @foreach (var reply in replies)
+                                                {
+                                                    // Giả lập kiểm tra Quản trị viên/Nhân viên bằng Email mẫu
+                                                    bool isAdmin = reply.User?.Email == "admin@gmail.com" || reply.User?.Email == "staff@gmail.com";
+                                                    
+                                                    // BỎ HIỂN THỊ GUEST GENDER: Chỉ lấy GuestName
+                                                    string replierName = reply.UserId != null 
+                                                        ? (reply.User?.FullName ?? reply.User?.UserName?.Split('@')[0] ?? "Khách hàng") 
+                                                        : reply.GuestName ?? "Khách hàng";
+                                                    
+                                                    <div class="comment-reply @(isAdmin ? "admin-reply" : "") d-flex">
+                                                        <div class="@(isAdmin ? "bg-warning" : "bg-light border") text-dark rounded-circle d-flex justify-content-center align-items-center me-3 flex-shrink-0" style="width: 35px; height: 35px;"><i class="fa @(isAdmin ? "fa-headset" : "fa-user")"></i></div>
+                                                        <div>
+                                                            <h6 class="fw-bold mb-1" style="font-size: 0.9rem;">
+                                                                @replierName
+                                                                @if(isAdmin) { <span class="badge bg-warning text-dark ms-1">QTV SunMobile</span> }
+                                                                <span class="text-muted small fw-normal ms-2">@reply.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                                            </h6>
+                                                            <p class="mb-0 text-dark" style="font-size: 0.95rem;">@reply.Content</p>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Mượt mà giữ Tab khi post form
+        document.addEventListener("DOMContentLoaded", function() {
+            var hash = window.location.hash;
+            if (hash) {
+                var targetTab = document.querySelector('button[data-bs-target="' + hash + '"]');
+                if (targetTab) {
+                    var tab = new bootstrap.Tab(targetTab);
+                    tab.show();
+                    
+                    // Cuộn trang xuống vùng tab sau khi render
+                    setTimeout(function() {
+                        document.getElementById('myTab').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+        });
+    </script>
+}

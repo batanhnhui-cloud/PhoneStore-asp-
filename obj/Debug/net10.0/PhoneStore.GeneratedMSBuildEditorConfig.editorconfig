@@ -19,221 +19,245 @@ build_property.TargetFrameworkIdentifier = .NETCoreApp
 build_property.TargetFrameworkVersion = v10.0
 build_property.RootNamespace = PhoneStore
 build_property.RootNamespace = PhoneStore
-build_property.ProjectDir = D:\Đồ án ASP.NET - Copy\PhoneStore\PhoneStore\
+build_property.ProjectDir = D:\Đồ án ASP.NET\PhoneStore\PhoneStore\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\Đồ án ASP.NET - Copy\PhoneStore\PhoneStore
+build_property.MSBuildProjectDirectory = D:\Đồ án ASP.NET\PhoneStore\PhoneStore
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Areas/Admin/Views/Shared/_AdminLayout.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Areas/Admin/Views/Shared/_AdminLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Account/Login.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Account/Register.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/CreateBranch.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/CreateBranch.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ3JlYXRlQnJhbmNoLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/CreateStaff.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/CreateStaff.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ3JlYXRlU3RhZmYuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/Dashboard.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRGFzaGJvYXJkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/EditBranch.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/EditBranch.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRWRpdEJyYW5jaC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/EditCustomer.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/EditCustomer.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRWRpdEN1c3RvbWVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/EditStaff.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/EditStaff.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRWRpdFN0YWZmLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/ManageBranches.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/ManageBranches.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlQnJhbmNoZXMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/ManageCustomers.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/ManageComments.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlQ29tbWVudHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/ManageCustomers.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlQ3VzdG9tZXJzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/ManageInventory.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/ManageInventory.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlSW52ZW50b3J5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/ManageStaff.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/ManageStaff.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlU3RhZmYuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/OrderManagement.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/OrderManagement.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cT3JkZXJNYW5hZ2VtZW50LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Admin/RevenueReport.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Admin/RevenueReport.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUmV2ZW51ZVJlcG9ydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Cart/Checkout.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Cart/Checkout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxDaGVja291dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Cart/CheckoutSuccess.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Cart/CheckoutSuccess.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxDaGVja291dFN1Y2Nlc3MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Cart/Index.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Cart/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Category/Create.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Category/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcnlcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Category/Edit.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Category/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcnlcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Category/Index.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Category/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcnlcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Customer/MyOrders.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Customer/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJcRGFzaGJvYXJkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Customer/MyOrders.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJcTXlPcmRlcnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Customer/OrderDetails.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Customer/OrderDetails.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VzdG9tZXJcT3JkZXJEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Home/Details.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Home/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Home/Index.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Home/MyOrders.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Home/MyOrders.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxNeU9yZGVycy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Home/Privacy.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Home/Shop.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Home/Shop.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTaG9wLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Home/TrackImei.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Home/TrackImei.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUcmFja0ltZWkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Home/TrackOrder.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Home/TrackOrder.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUcmFja09yZGVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Order/AdminIndex.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Order/AdminIndex.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcQWRtaW5JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Order/Checkout.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Order/Checkout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcQ2hlY2tvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Order/Details.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Order/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Order/Success.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Order/Success.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcU3VjY2Vzcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Product/Create.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Product/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Product/Delete.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Product/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Product/Details.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Product/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Product/Edit.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Product/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Product/Index.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Product/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Shared/Error.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Shared/_AdminLayout.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Shared/_AdminLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Shared/_LoginPartial.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Shared/_ValidationScriptsPartial.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Staff/FulfillOrder.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Staff/EditCustomer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhZmZcRWRpdEN1c3RvbWVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Staff/FulfillOrder.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhZmZcRnVsZmlsbE9yZGVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Staff/ImportImei.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Staff/ImeiDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhZmZcSW1laURldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Staff/ImportImei.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhZmZcSW1wb3J0SW1laS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Staff/Inventory.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Staff/Inventory.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhZmZcSW52ZW50b3J5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Staff/OrderManagement.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Staff/ManageComments.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhZmZcTWFuYWdlQ29tbWVudHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Staff/ManageCustomers.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhZmZcTWFuYWdlQ3VzdG9tZXJzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Staff/OrderManagement.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhZmZcT3JkZXJNYW5hZ2VtZW50LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Staff/POS.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Staff/POS.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhZmZcUE9TLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Staff/TransferStock.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Staff/TransferStock.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhZmZcVHJhbnNmZXJTdG9jay5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/_ViewImports.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/_ViewStart.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Đồ án ASP.NET - Copy/PhoneStore/PhoneStore/Views/Shared/_Layout.cshtml]
+[D:/Đồ án ASP.NET/PhoneStore/PhoneStore/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-fqh37qo6yg
