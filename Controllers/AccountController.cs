@@ -90,13 +90,15 @@ namespace PhoneStore.Controllers
             return View(model);
         }
 
-        // 1. Mở trang nhập email
-        [HttpGet] public IActionResult ForgotPassword() => View();
+        // --- QUÊN MẬT KHẨU (GET) ---
+        [HttpGet]
+        public IActionResult ForgotPassword() => View();
 
-        // 2. Xử lý gửi email reset
+        // --- QUÊN MẬT KHẨU (POST) ---
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
+            if (!ModelState.IsValid) return View(model);
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null)
             {
@@ -104,17 +106,21 @@ namespace PhoneStore.Controllers
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { email = model.Email, code = code }, Request.Scheme);
                 await _emailSender.SendEmailAsync(model.Email, "Đặt lại mật khẩu", $"Bấm vào đây để reset: {callbackUrl}");
             }
-            return View("ForgotPasswordConfirmation"); // Tạo view này thông báo khách check mail
+            return View("ForgotPasswordConfirmation");
         }
 
-        // 3. Mở trang đặt mật khẩu mới
-        [HttpGet] public IActionResult ResetPassword(string email, string code) => View(new ResetPasswordViewModel { Email = email, Code = code });
+        // --- RESET MẬT KHẨU (GET) ---
+        [HttpGet]
+        public IActionResult ResetPassword(string email, string code) => View(new ResetPasswordViewModel { Email = email, Code = code });
 
-        // 4. Lưu mật khẩu mới
+        // --- RESET MẬT KHẨU (POST) ---
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
+            if (!ModelState.IsValid) return View(model);
             var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null) return RedirectToAction("ResetPasswordConfirmation");
+
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded) return View("ResetPasswordConfirmation");
 

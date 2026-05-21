@@ -14,8 +14,8 @@ namespace PhoneStore.Models
         public string Email { get; set; } = null!;
         [Required, DataType(DataType.Password)]
         public string Password { get; set; } = null!;
-        [DataType(DataType.Password), Compare("Password")]
+        [DataType(DataType.Password), Compare("Password", ErrorMessage = "Mật khẩu không khớp")]
         public string ConfirmPassword { get; set; } = null!;
-        public string Code { get; set; } = null!; // Đây là token xác thực
+        public string Code { get; set; } = null!;
     }
 }

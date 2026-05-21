@@ -14,7 +14,7 @@ public class EmailSender : IEmailSender
 
         using var client = new MailKit.Net.Smtp.SmtpClient();
         await client.ConnectAsync("smtp.gmail.com", 587, false);
-        await client.AuthenticateAsync("email_cua_ban@gmail.com", "MÃ_APP_PASSWORD_16_KÝ_TỰ");
+        await client.AuthenticateAsync("nhat6a@gmail.com", "uxkd sdwh ymdn ichf");
         await client.SendAsync(msg);
         await client.DisconnectAsync(true);
     }

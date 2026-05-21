@@ -12,29 +12,25 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // --- 2. CẤU HÌNH IDENTITY (Xác thực & Phân quyền) ---
-// Sử dụng ApplicationUser để hỗ trợ thuộc tính BranchId (Chi nhánh)
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
-    // Cấu hình mật khẩu đơn giản để thuận tiện cho việc làm đồ án
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 4;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
-
     options.SignIn.RequireConfirmedAccount = false;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// --- 3. CẤU HÌNH COOKIE CHO LOGIN TÙY CHỈNH ---
-// Giúp hệ thống biết đường dẫn đến AccountController/Login của bạn
+// --- 3. CẤU HÌNH COOKIE ---
 builder.Services.ConfigureApplicationCookie(options => {
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
-// --- 4. CẤU HÌNH SESSION (Dành cho Giỏ hàng) ---
+// --- 4. CẤU HÌNH SESSION ---
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options => {
@@ -43,30 +39,25 @@ builder.Services.AddSession(options => {
     options.Cookie.IsEssential = true;
 });
 
-// --- 5. ĐĂNG KÝ CÁC DỊCH VỤ MVC ---
+// --- 5. ĐĂNG KÝ DỊCH VỤ ---
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// ====================================================================
-// [THÊM MỚI QUAN TRỌNG]: CẤU HÌNH CORS CHO API (CẤP QUYỀN CHO APPLE)
-// ====================================================================
+// Đăng ký dịch vụ EmailSender cho chức năng Quên mật khẩu
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+// Cấu hình CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAppleEDI", policy =>
     {
-        policy.AllowAnyOrigin()  // Cho phép mọi tên miền (kể cả file HTML ở Desktop)
-              .AllowAnyMethod()  // Cho phép mọi method (POST, GET...)
-              .AllowAnyHeader(); // Cho phép mọi header (JSON)
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
 
-// Đăng ký dịch vụ EmailSender mà chúng ta đã tạo
-builder.Services.AddTransient<IEmailSender, EmailSender>();
-
 var app = builder.Build();
 
-// --- 6. KHỞI TẠO DỮ LIỆU (SEED DATA) ---
-// Tự động tạo Roles (Admin, Staff, Customer) và tài khoản Admin mặc định
+// --- 6. KHỞI TẠO DỮ LIỆU ---
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -77,11 +68,11 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Lỗi khi khởi tạo dữ liệu mẫu (Seeding).");
+        logger.LogError(ex, "Lỗi khi khởi tạo dữ liệu mẫu.");
     }
 }
 
-// --- 7. CẤU HÌNH HTTP REQUEST PIPELINE ---
+// --- 7. CẤU HÌNH PIPELINE ---
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -92,15 +83,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// ====================================================================
-// [THÊM MỚI QUAN TRỌNG]: KÍCH HOẠT CORS VỪA CẤU HÌNH Ở TRÊN
-// Bắt buộc phải đặt ở đây: Nằm DƯỚI UseRouting và TRÊN UseAuthorization
-// ====================================================================
 app.UseCors("AllowAppleEDI");
-
-app.UseSession(); // LƯU Ý: Session phải đặt TRƯỚC Authentication
-app.UseAuthentication(); // Ai là người đang truy cập?
-app.UseAuthorization();  // Người đó có quyền làm gì?
+app.UseSession();
+app.UseAuthentication();
+app.UseAuthorization();
 
 // --- 8. CẤU HÌNH ROUTING ---
 app.MapControllerRoute(
