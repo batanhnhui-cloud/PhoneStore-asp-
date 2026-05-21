@@ -2,6 +2,7 @@ wwwroot\css\site.css
 wwwroot\favicon.ico
 wwwroot\images\3d266a11-dcf6-461b-aa09-ecebd022e141.webp
 wwwroot\images\bf8d0e45-0b67-401d-aef5-03d55822d9e1.webp
+wwwroot\images\ip17.jpg
 wwwroot\images\products\08ca0912-f438-4ff5-9d3d-a7b7529d9804.png
 wwwroot\images\products\09cdcbef-b71b-4e50-a0da-d65832e5960d.jpg
 wwwroot\images\products\166e862c-9f83-4d5e-a7a5-71c804c406f8.webp
@@ -31,6 +32,7 @@ wwwroot\images\products\d8548745-d183-4890-adb6-57e000582c41.jpg
 wwwroot\images\products\ebca6200-a556-4929-bfcf-0f3b65c72155.png
 wwwroot\images\products\f07fde17-5896-49ae-95dd-87ca3fe49962.webp
 wwwroot\images\products\ffc341d9-b170-4e74-a960-e07aac14f181.webp
+wwwroot\images\s25.webp
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map

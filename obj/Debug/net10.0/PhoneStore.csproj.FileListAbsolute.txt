@@ -680,3 +680,6 @@ D:\Đồ án ASP.NET - Copy\PhoneStore\PhoneStore\obj\Debug\net10.0\PhoneStore.g
 D:\Đồ án ASP.NET - Copy\PhoneStore\PhoneStore\obj\Debug\net10.0\ref\PhoneStore.dll
 D:\Đồ án ASP.NET - Copy\PhoneStore\PhoneStore\obj\Debug\net10.0\compressed\svssvkonut-{0}-fbrjkr141r-fbrjkr141r.gz
 D:\Đồ án ASP.NET\PhoneStore\PhoneStore\obj\Debug\net10.0\compressed\svssvkonut-{0}-fbrjkr141r-fbrjkr141r.gz
+D:\Đồ án ASP.NET\PhoneStore\PhoneStore\bin\Debug\net10.0\BouncyCastle.Cryptography.dll
+D:\Đồ án ASP.NET\PhoneStore\PhoneStore\bin\Debug\net10.0\MailKit.dll
+D:\Đồ án ASP.NET\PhoneStore\PhoneStore\bin\Debug\net10.0\MimeKit.dll

@@ -60,6 +60,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Đăng ký dịch vụ EmailSender mà chúng ta đã tạo
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 var app = builder.Build();
 
 // --- 6. KHỞI TẠO DỮ LIỆU (SEED DATA) ---
